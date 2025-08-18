@@ -1,0 +1,99 @@
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'index')}">
+
+<body>
+<div class="kt-container-fluid">
+    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-7.5">
+
+        <div th:each="project : ${projects}" class="kt-card flex flex-col gap-5 p-5 lg:p-7.5">
+            <div class="flex items-center flex-wrap justify-between gap-1">
+                <div class="flex items-center gap-2.5">
+                    <div class="relative size-[44px] shrink-0">
+                        <img alt="" class="size-12" th:src="${project.iconUrl}"/>
+                    </div>
+
+                    <div class="flex flex-col">
+                        <a class="text-base font-medium text-mono hover:text-primary mb-px"
+                           th:href="@{/data/{slug}(slug=${project.id})}"
+                           th:text="${project.name}"></a>
+                        <span class="text-sm text-secondary-foreground"
+                              th:text="${project.creator.fullName}"></span>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="kt-menu inline-flex" data-kt-menu="true">
+                    <div class="kt-menu-item"
+                         data-kt-menu-item-toggle="dropdown"
+                         data-kt-menu-item-trigger="click"
+                         data-kt-menu-item-placement="bottom-end"
+                         data-kt-menu-item-offset="0, 10px"
+                         data-kt-menu-item-placement-rtl="bottom-start">
+                        <button class="kt-menu-toggle kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost">
+                            <i class="ki-filled ki-dots-vertical text-lg"></i>
+                        </button>
+
+                        <div class="kt-menu-dropdown kt-menu-default w-full max-w-[175px]" data-kt-menu-dismiss="true">
+                            <div class="kt-menu-item">
+                                <a class="kt-menu-link" th:href="@{/projects/{slug}/edit(slug=${project.id})}">
+                                    <span class="kt-menu-icon"><i class="ki-filled ki-message-edit"></i></span>
+                                    <span class="kt-menu-title">Edit</span>
+                                </a>
+                            </div>
+                            <div class="kt-menu-item">
+                                <a class="kt-menu-link" th:href="@{/projects/{slug}/config(slug=${project.id})}">
+                                    <span class="kt-menu-icon"><i class="ki-filled ki-setting"></i></span>
+                                    <span class="kt-menu-title">Configure</span>
+                                </a>
+                            </div>
+                            <div class="kt-menu-item">
+                                <a class="kt-menu-link" th:href="@{/projects/{slug}/train(slug=${project.id})}">
+                                    <span class="kt-menu-icon"><i class="ki-filled ki-data"></i></span>
+                                    <span class="kt-menu-title">Train</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Actions -->
+            </div>
+
+            <p class="text-sm text-secondary-foreground" th:text="${project.description}">
+            </p>
+
+            <span class="text-sm text-foreground"
+                  th:text="${#dates.format(project.createdAt, 'dd MMM yyyy, HH:mm')}"></span>
+        </div>
+
+        <!-- Add new role card (static link) -->
+        <style>
+            .add-new-bg{background-image:url('assets/metronic/media/images/2600x1200/bg-4.png')}
+            .dark .add-new-bg{background-image:url('assets/metronic/media/images/2600x1200/bg-4-dark.png')}
+        </style>
+        <a class="kt-card border-2 border-dashed border-primary/10 bg-center bg-[length:600px] bg-no-repeat add-new-bg"
+           th:href="@{/projects}">
+            <div class="kt-card-content grid items-center">
+                <div class="flex flex-col gap-3">
+                    <div class="flex justify-center pt-5">
+                        <div class="relative size-[60px] shrink-0">
+                            <svg class="w-full h-full stroke-primary/10 fill-primary/5" viewBox="0 0 44 48" width="44" height="48" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16 2.4641C19.7128 0.320509 24.2872 0.320508 28 2.4641L37.6506 8.0359C41.3634 10.1795 43.6506 14.141 43.6506 18.4282V29.5718C43.6506 33.859 41.3634 37.8205 37.6506 39.9641L28 45.5359C24.2872 47.6795 19.7128 47.6795 16 45.5359L6.34937 39.9641C2.63655 37.8205 0.349365 33.859 0.349365 29.5718V18.4282C0.349365 14.141 2.63655 10.1795 6.34937 8.0359L16 2.4641Z"></path>
+                                <path d="M16.25 2.89711C19.8081 0.842838 24.1919 0.842837 27.75 2.89711L37.4006 8.46891C40.9587 10.5232 43.1506 14.3196 43.1506 18.4282V29.5718C43.1506 33.6804 40.9587 37.4768 37.4006 39.5311L27.75 45.1029C24.1919 47.1572 19.8081 47.1572 16.25 45.1029L6.59937 39.5311C3.04125 37.4768 0.849365 33.6803 0.849365 29.5718V18.4282C0.849365 14.3196 3.04125 10.5232 6.59937 8.46891L16.25 2.89711Z"></path>
+                            </svg>
+                            <div class="absolute leading-none start-2/4 top-2/4 -translate-y-2/4 -translate-x-2/4 rtl:translate-x-2/4">
+                                <i class="ki-filled ki-rocket text-2xl text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col text-center">
+                        <span class="text-lg font-medium text-mono hover:text-primary mb-px">Add New Project</span>
+                        <span class="text-sm text-secondary-foreground">Ignite Professional Adventures</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+
+    </div>
+</div>
+
+</body>
+</html>

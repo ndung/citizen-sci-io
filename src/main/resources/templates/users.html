@@ -1,0 +1,140 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: layout (~{::body},'index')}">
+<body>
+<div class="kt-container-fluid px=0">
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-5 lg:gap-7.5">
+        <!-- Flash messages (optional) -->
+        <div class="flex flex-col gap-5 lg:gap-7.5">
+            <div class="kt-badge kt-badge-sm kt-badge-success kt-badge-outline" th:if="${userSaved}">
+                User saved successfully.
+            </div>
+            <div class="kt-card min-w-full">
+                <div class="kt-card-header">
+                    <h3 class="kt-card-title"
+                        th:text="${user.id == null} ? 'Create User' : 'Edit User'">Create User</h3>
+                </div>
+
+                <form th:action="@{${user.id == null} ? '/admin/users' : '/admin/users/' + ${user.id}}"
+                      th:object="${user}"
+                      method="post"
+                      class="kt-card-content grid gap-5">
+                    <input type="hidden" th:if="${_csrf != null}"
+                           th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                    <div class="flex items-baseline gap-2.5">
+                        <label class="kt-form-label max-w-56" for="username">Username</label>
+                        <input class="kt-input" id="username" type="text" th:field="*{username}" />
+                    </div>
+                    <div th:if="${#fields.hasErrors('username')}">
+                        <span class="kt-badge kt-badge-sm kt-badge-warning kt-badge-outline" th:errors="*{username}">username error</span>
+                    </div>
+
+                    <div class="flex items-baseline gap-2.5">
+                        <label class="kt-form-label max-w-56" for="fullName">Full Name</label>
+                        <input class="kt-input" id="fullName" type="text" th:field="*{fullName}" />
+                    </div>
+                    <div th:if="${#fields.hasErrors('fullName')}">
+                        <span class="kt-badge kt-badge-sm kt-badge-warning kt-badge-outline" th:errors="*{fullName}">fullName error</span>
+                    </div>
+
+                    <div class="flex items-baseline gap-2.5">
+                        <label class="kt-form-label max-w-56" for="email">Email</label>
+                        <input class="kt-input" id="email" type="email" th:field="*{email}" />
+                    </div>
+                    <div th:if="${#fields.hasErrors('email')}">
+                        <span class="kt-badge kt-badge-sm kt-badge-warning kt-badge-outline" th:errors="*{email}">email error</span>
+                    </div>
+
+                    <div class="flex items-baseline gap-2.5">
+                        <label class="kt-form-label max-w-56" for="password">Password</label>
+                        <input class="kt-input" id="password" type="password" th:field="*{password}" />
+                    </div>
+
+                    <div class="flex items-baseline gap-2.5">
+                        <label class="kt-form-label max-w-56" for="confirmPassword">Confirm Password</label>
+                        <input class="kt-input" id="confirmPassword" type="password" th:field="*{confirmPassword}" />
+                    </div>
+
+                    <div class="flex items-center gap-2.5">
+                        <label class="kt-form-label max-w-56" for="enabled">Enabled</label>
+                        <input id="enabled" type="checkbox" th:field="*{enabled}" />
+                    </div>
+
+                    <div class="flex items-baseline gap-2.5">
+                        <label class="kt-form-label max-w-56" for="rolesCsv">Roles</label>
+                        <input class="kt-input" id="rolesCsv" type="text" th:field="*{rolesCsv}" placeholder="ADMIN, USER" />
+                    </div>
+
+                    <div class="flex justify-end gap-2">
+                        <a th:if="${user.id != null}"
+                           th:href="@{/admin/users}" class="kt-btn">Cancel edit</a>
+                        <button class="kt-btn kt-btn-primary"
+                                th:text="${user.id == null} ? 'Create' : 'Save Changes'">Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-span-2">
+            <div class="kt-card">
+                <div class="kt-card-header">
+                    <h3 class="kt-card-title">Users</h3>
+                </div>
+
+                <div class="kt-card-content">
+                    <!-- OPTIONAL: DataTables CSS -->
+                    <link rel="stylesheet" th:href="@{https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css}" />
+
+                    <div class="table-responsive">
+                        <table id="usersTable" class="display table w-full min-w-[1000px]">
+                            <thead>
+                            <tr>
+                                <th style="width:80px">ID</th>
+                                <th>Username</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Enabled</th>
+                                <th>Roles</th>
+                                <th style="width:120px">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="u : ${users}">
+                                <td th:text="${u.id}">1</td>
+                                <td th:text="${u.username}">alice</td>
+                                <td th:text="${u.fullName}">Alice Doe</td>
+                                <td th:text="${u.email}">alice@example.com</td>
+                                <td>
+                                    <span th:text="${u.enabled} ? 'Yes' : 'No'">Yes</span>
+                                </td>
+                                <td th:text="${#strings.arrayJoin(u.roles.toArray(), ', ')}">ADMIN, USER</td>
+                                <td>
+                                    <a th:href="@{|/admin/users/${u.id}/edit|}" class="kt-btn kt-btn-light">Edit</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- OPTIONAL: DataTables JS + init with scrollX -->
+                <script th:src="@{https://code.jquery.com/jquery-3.7.1.min.js}"></script>
+                <script th:src="@{https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js}"></script>
+                <script>
+                    $(function () {
+                        $('#usersTable').DataTable({
+                            scrollX: true,        // enable horizontal scrolling
+                            autoWidth: false,     // keep your widths; don’t auto-expand
+                            columnDefs: [
+                                { targets: '_all', className: 'whitespace-nowrap' }
+                            ]
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

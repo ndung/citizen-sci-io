@@ -1,0 +1,140 @@
+<!-- templates/sections/manage.html -->
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: layout (~{::body}, 'index')}">
+
+<body>
+<div class="kt-container-fluid px-0">
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-5 lg:gap-7.5">
+        <div class="flex flex-col gap-5 lg:gap-7.5">
+            <div class="kt-badge kt-badge-sm kt-badge-success kt-badge-outline" th:if="${sectionSaved}">
+                Section saved successfully.
+            </div>
+            <div class="kt-card min-w-full">
+                <div class="kt-card-header">
+                    <h3 class="kt-card-title"
+                        th:text="${section.id == null} ? 'Create Section' : 'Edit Section'">Create Section</h3>
+                </div>
+
+                <form th:action="@{${section.id == null} ? '/sections' : '/sections/' + ${section.id}}"
+                      th:object="${section}"
+                      method="post"
+                      class="kt-card-content grid gap-5">
+                    <input type="hidden" th:if="${_csrf != null}"
+                           th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                    <!-- Sequence -->
+                    <div class="flex items-baseline gap-2.5">
+                        <label class="kt-form-label max-w-56" for="sequence">Sequence</label>
+                        <input class="kt-input" id="sequence" type="number" th:field="*{sequence}"/>
+                    </div>
+                    <div th:if="${#fields.hasErrors('sequence')}">
+                        <span class="kt-badge kt-badge-sm kt-badge-warning kt-badge-outline" th:errors="*{sequence}">sequence error</span>
+                    </div>
+
+                    <div class="flex items-baseline gap-2.5">
+                        <label class="kt-form-label max-w-56" for="type">Type</label>
+                        <select class="kt-input" id="type" th:field="*{type}">
+                            <option th:each="entry : ${typeOptions}"
+                                    th:value="${entry.key}"
+                                    th:text="${entry.value}">
+                            </option>
+                        </select>
+                    </div>
+                    <div th:if="${#fields.hasErrors('type')}">
+                        <span class="kt-badge kt-badge-sm kt-badge-warning kt-badge-outline" th:errors="*{type}">type error</span>
+                    </div>
+
+                    <div class="flex items-baseline gap-2.5">
+                        <label class="kt-form-label max-w-56" for="name">Name</label>
+                        <input class="kt-input" id="name" type="text" th:field="*{name}"/>
+                    </div>
+                    <div th:if="${#fields.hasErrors('name')}">
+                        <span class="kt-badge kt-badge-sm kt-badge-warning kt-badge-outline" th:errors="*{name}">name error</span>
+                    </div>
+
+                    <div class="flex items-baseline gap-2.5">
+                        <label class="kt-form-label max-w-56" for="enabled">Enabled</label>
+                        <input id="enabled" type="checkbox" th:field="*{enabled}"/>
+                    </div>
+
+                    <div class="flex items-baseline gap-2.5">
+                        <label class="kt-form-label max-w-56" for="projectId">Project</label>
+                        <select class="kt-input" id="projectId" th:field="*{projectId}">
+                            <option th:each="p : ${projects}" th:value="${p.id}"
+                                    th:text="${p.name != null ? p.name : 'Project ' + p.id}"></option>
+                        </select>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="flex justify-end gap-2">
+                        <a th:if="${section.id != null}"
+                           th:href="@{/projects}" class="kt-btn">Cancel edit</a>
+                        <button class="kt-btn kt-btn-primary"
+                                th:text="${section.id == null} ? 'Create' : 'Save Changes'">Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-span-2">
+            <div class="kt-card">
+                <div class="kt-card-content">
+                    <link rel="stylesheet"
+                          th:href="@{https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css}"/>
+
+                    <div class="table-responsive">
+                        <table id="sectionsTable" class="display table w-full min-w-[1000px]">
+                            <thead>
+                            <tr class="whitespace-nowrap">
+                                <th>Sequence</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Enabled</th>
+                                <th>Project</th>
+                                <th style="width:80px">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="s : ${sections}" class="whitespace-nowrap">
+                                <td style="width:10%" th:text="${s.sequence}">1</td>
+                                <td style="width:50%" th:text="${s.name}">Name</td>
+                                <td style="width:20%" th:text="${s.type}">TYPE</td>
+                                <td style="width:10%"><span th:text="${s.enabled} ? 'Yes' : 'No'">Yes</span></td>
+                                <td th:text="${s.project != null ? (s.project.name != null ? s.project.name : 'Project ' + s.project.id) : '-'}">
+                                    -
+                                </td>
+                                <td style="width:10%" class="flex gap-2">
+                                    <a th:href="@{|/sections/${s.id}/edit|}" class="kt-btn kt-btn-light">Edit</a>
+                                    <a th:href="@{|/sections/${s.id}/config|}" class="kt-btn kt-btn-light">Config</a>
+                                    <!--form th:action="@{|/sections/${s.id}/delete|}" method="post"
+                                          onsubmit="return confirm('Delete this section?');">
+                                        <input type="hidden" th:if="${_csrf != null}"
+                                               th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                        <button class="kt-btn kt-btn-danger" type="submit">Delete</button>
+                                    </form-->
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <script th:src="@{https://code.jquery.com/jquery-3.7.1.min.js}"></script>
+                <script th:src="@{https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js}"></script>
+                <script>
+                    $(function () {
+                        $('#sectionsTable').DataTable({
+                            scrollX: true,        // enable horizontal scrolling
+                            autoWidth: false,     // keep your widths; don’t auto-expand
+                            columnDefs: [
+                                {targets: '_all', className: 'whitespace-nowrap'}
+                            ]
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

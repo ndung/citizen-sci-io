@@ -1,0 +1,162 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: layout (~{::body},'index')}">
+
+<body>
+<div class="kt-container-fluid">
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-5 lg:gap-7.5">
+        <div class="flex flex-col gap-5 lg:gap-7.5">
+            <div class="kt-badge kt-badge-sm kt-badge-success kt-badge-outline" th:if="${projectSaved}">
+                Project saved successfully.
+            </div>
+            <div class="kt-card min-w-full">
+                <div class="kt-card-header">
+                    <h3 class="kt-card-title"
+                        th:text="${project.id == null} ? 'Create Project' : 'Edit Project'">Create Project</h3>
+                </div>
+
+                <form th:action="@{${project.id == null} ? '/projects' : '/projects/' + ${project.id}}"
+                      th:object="${project}"
+                      method="post"
+                      enctype="multipart/form-data"
+                      class="kt-card-content grid gap-5">
+                    <input type="hidden" th:if="${_csrf != null}"
+                           th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                    <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="kt-form-label max-w-56" for="name">Project name</label>
+                        <input class="kt-input" id="name" type="text" th:field="*{name}"/>
+                    </div>
+                    <div th:if="${#fields.hasErrors('name')}">
+                        <span class="kt-badge kt-badge-sm kt-badge-warning kt-badge-outline" th:errors="*{name}">Name error</span>
+                    </div>
+
+                    <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="kt-form-label max-w-56" for="description">Project description</label>
+                        <input class="kt-input" id="description" type="text" th:field="*{description}"/>
+                    </div>
+                    <div th:if="${#fields.hasErrors('description')}">
+                        <span class="kt-badge kt-badge-sm kt-badge-warning kt-badge-outline" th:errors="*{description}">Description error</span>
+                    </div>
+
+
+                    <!-- keep current filename when editing -->
+                    <input type="hidden" th:field="*{icon}"/>
+
+                    <div class="flex items-start flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="kt-form-label max-w-56" for="iconFile">Icon</label>
+                        <div class="flex flex-col gap-2">
+                            <input class="kt-input" id="iconFile" type="file" th:field="*{iconFile}" accept="image/*"/>
+                            <!-- Existing icon preview if editing -->
+                            <div class="flex items-center gap-3" th:if="${project.icon != null}">
+                                <img th:src="@{|/files/${project.icon}|}" alt="Current icon"
+                                     style="height:48px;width:48px;object-fit:cover;border-radius:8px;border:1px solid #eee;">
+                                <span class="text-sm text-gray-500">Current icon</span>
+                            </div>
+                            <!-- Live preview for newly selected file -->
+                            <img id="iconPreview" alt="" style="display:none;height:48px;width:48px;object-fit:cover;border-radius:8px;border:1px solid #eee;">
+                            <small class="text-xs text-gray-500">PNG/JPG/SVG; recommended 48×48 or 64×64.</small>
+                        </div>
+                    </div>
+
+                    <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="kt-form-label max-w-56" for="enabled">Enabled</label>
+                        <input id="enabled" type="checkbox" th:field="*{enabled}" />
+                    </div>
+
+                    <div sec:authorize="hasAnyRole('ADMIN')" class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="kt-form-label max-w-56" for="publiclyAvailable">Public</label>
+                        <input id="publiclyAvailable" type="checkbox" th:field="*{publiclyAvailable}" />
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="flex justify-end gap-2">
+                        <a th:if="${project.id != null}"
+                           th:href="@{/projects}" class="kt-btn">Cancel edit</a>
+                        <button class="kt-btn kt-btn-primary"
+                                th:text="${project.id == null} ? 'Create' : 'Save Changes'">Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-span-2">
+            <div class="kt-card">
+                <div class="kt-card-header">
+                    <h3 class="kt-card-title">Projects</h3>
+                </div>
+
+                <div class="kt-card-content">
+                    <!-- DataTables CSS (CDN) -->
+                    <link rel="stylesheet"
+                          th:href="@{https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css}"/>
+
+                    <div class="table-responsive">
+                        <table id="projectsTable" class="display table w-full min-w-[1000px]">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Enabled</th>
+                                <th>Public</th>
+                                <th>Creator</th>
+                                <th>Created At</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- SSR fallback if JS disabled -->
+                            <tr th:each="p : ${projects}">
+                                <td style="width:20%" th:text="${p.name}">Example</td>
+                                <td style="width:30%" th:text="${p.description}">Desc</td>
+                                <td style="width:10%"><span th:text="${p.enabled} ? 'Yes' : 'No'">Yes</span></td>
+                                <td style="width:10%"><span th:text="${p.publiclyAvailable} ? 'Yes' : 'No'">Yes</span></td>
+                                <td style="width:10%" th:text="${p.creator}">Creator</td>
+                                <td style="width:10%"><span th:text="${#dates.format(p.createdAt, 'dd MMM yyyy, HH:mm')}"></span></td>
+                                <td style="width:10%">
+                                    <a th:href="@{|/projects/${p.id}/edit|}"
+                                       class="kt-btn kt-btn-light">Edit</a>
+                                    <a th:href="@{|/projects/${p.id}/config|}"
+                                       class="kt-btn kt-btn-light">Config</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- jQuery + DataTables (CDN) -->
+                    <script th:src="@{https://code.jquery.com/jquery-3.7.1.min.js}"></script>
+                    <script th:src="@{https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js}"></script>
+                    <script>
+                        $(function () {
+                            $('#projectsTable').DataTable({
+                                scrollX: true,        // enable horizontal scrolling
+                                autoWidth: false,     // keep your widths; don’t auto-expand
+                                columnDefs: [
+                                    {targets: '_all', className: 'whitespace-nowrap'}
+                                ]
+                            });
+
+                            // Live icon preview
+                            const input = document.getElementById('icon');
+                            const preview = document.getElementById('iconPreview');
+                            if (input && preview) {
+                                input.addEventListener('change', function () {
+                                    const file = this.files && this.files[0];
+                                    if (!file) { preview.style.display = 'none'; return; }
+                                    const url = URL.createObjectURL(file);
+                                    preview.src = url;
+                                    preview.style.display = 'inline-block';
+                                });
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

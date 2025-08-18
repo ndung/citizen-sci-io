@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: layout (~{::body}, 'index')}">
+<body>
+<div class="kt-container-fluid">
+    <div class="grid gap-5 lg:gap-7.5 xl:w-[38.75rem] mx-auto">
+
+        <!-- Flash messages (optional) -->
+        <div class="kt-badge kt-badge-sm kt-badge-success kt-badge-outline" th:if="${profileSaved}">
+            Profile saved successfully.
+        </div>
+        <div class="kt-badge kt-badge-sm kt-badge-success kt-badge-outline" th:if="${passwordChanged}">
+            Password changed successfully.
+        </div>
+
+        <!-- General Settings -->
+        <div class="kt-card pb-2.5">
+            <div class="kt-card-header" id="basic_settings">
+                <h3 class="kt-card-title">General Settings</h3>
+            </div>
+
+            <form class="kt-card-content grid gap-5"
+                  th:action="@{/profile}"
+                  th:object="${form}"
+                  method="post">
+
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                    <label class="kt-form-label max-w-56">User name</label>
+                    <input class="kt-input"
+                           type="text"
+                           th:field="*{username}"
+                           th:errorclass="border-destructive"/>
+                </div>
+                <div class="text-destructive text-xs" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+
+                <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                    <label class="kt-form-label max-w-56">Full name</label>
+                    <input class="kt-input"
+                           type="text"
+                           th:field="*{fullName}"
+                           th:errorclass="border-destructive"/>
+                </div>
+                <div class="text-destructive text-xs" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+
+                <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                    <label class="kt-form-label max-w-56">Email</label>
+                    <input class="kt-input"
+                           type="email"
+                           th:field="*{email}"
+                           th:errorclass="border-destructive"/>
+                </div>
+                <div class="text-destructive text-xs" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+
+
+                <div class="flex justify-end">
+                    <button class="kt-btn kt-btn-primary" type="submit">Save Changes</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Password -->
+        <div class="kt-card pb-2.5">
+            <div class="kt-card-header" id="password_settings">
+                <h3 class="kt-card-title">Password</h3>
+            </div>
+
+            <form class="kt-card-content grid gap-5"
+                  th:action="@{/profile/password}"
+                  th:object="${pwd}"
+                  method="post">
+
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                    <label class="kt-form-label max-w-56">Current Password</label>
+                    <input class="kt-input"
+                           type="password"
+                           placeholder="Your current password"
+                           th:field="*{currentPassword}"
+                           th:errorclass="border-destructive"/>
+                </div>
+                <div class="text-destructive text-xs" th:if="${#fields.hasErrors('currentPassword')}" th:errors="*{currentPassword}"></div>
+
+                <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                    <label class="kt-form-label max-w-56">New Password</label>
+                    <input class="kt-input"
+                           type="password"
+                           placeholder="New password"
+                           th:field="*{newPassword}"
+                           th:errorclass="border-destructive"/>
+                </div>
+                <div class="text-destructive text-xs" th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}"></div>
+
+                <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5 mb-2.5">
+                    <label class="kt-form-label max-w-56">Confirm New Password</label>
+                    <input class="kt-input"
+                           type="password"
+                           placeholder="Confirm new password"
+                           th:field="*{confirmNewPassword}"
+                           th:errorclass="border-destructive"/>
+                </div>
+                <div class="text-destructive text-xs" th:if="${#fields.hasErrors('confirmNewPassword')}" th:errors="*{confirmNewPassword}"></div>
+
+                <div class="flex justify-end">
+                    <button class="kt-btn kt-btn-primary" type="submit">Reset Password</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

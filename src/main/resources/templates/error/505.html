@@ -1,0 +1,25 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layoutx :: layout (~{::body},'index')}">
+<body>
+<div class="flex items-center justify-center grow h-full">
+    <div class="flex flex-col items-center">
+        <div class="mb-16">
+            <img alt="image" class="dark:hidden max-h-[160px]" src="assets/metronic/media/illustrations/8.svg"/>
+            <img alt="image" class="light:hidden max-h-[160px]" src="assets/metronic/media/illustrations/8-dark.svg"/>
+        </div>
+        <span class="kt-badge kt-badge-primary kt-badge-outline mb-3">
+     500 Error
+    </span>
+        <h3 class="text-2xl font-semibold text-mono text-center mb-2">
+            Internal Server Error
+        </h3>
+        <div class="text-base text-center text-secondary-foreground mb-10">
+            Server error occurred. Please try again later or
+            <a class="text-primary font-medium hover:text-primary" href="#">
+                Contact Us
+            </a>
+            for assistance.
+        </div>
+    </div>
+</div>
+</body>

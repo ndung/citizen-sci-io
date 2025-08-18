@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html th:fragment="layout (template, menu)" class="h-full" data-kt-theme="true" data-kt-theme-mode="light" dir="ltr"
+      lang="en">
+<head>
+    <base href="../../">
+    <title>
+
+    </title>
+    <meta charset="utf-8"/>
+    <meta content="follow, index" name="robots"/>
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
+    <meta content="" name="description"/>
+    <meta content="summary_large_image" name="twitter:card"/>
+    <meta content="assets/media/app/og-image.png" name="twitter:image"/>
+    <meta content="en_US" property="og:locale"/>
+    <meta content="@keenthemes" property="og:site_name"/>
+    <meta content="" property="og:description"/>
+    <meta content="assets/media/app/og-image.png" property="og:image"/>
+    <link th:href="@{/assets/metronic/media/app/apple-touch-icon.png}" rel="apple-touch-icon" sizes="180x180"/>
+    <link th:href="@{/assets/metronic/media/app/favicon-32x32.png}" rel="icon" sizes="32x32" type="image/png"/>
+    <link th:href="@{/assets/metronic/media/app/favicon-16x16.png}" rel="icon" sizes="16x16" type="image/png"/>
+    <link th:href="@{/assets/metronic/media/app/favicon.ico}" rel="shortcut icon"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link th:href="@{/assets/metronic/vendors/apexcharts/apexcharts.css}" rel="stylesheet"/>
+    <link th:href="@{/assets/metronic/vendors/keenicons/styles.bundle.css}" rel="stylesheet"/>
+    <link th:href="@{/assets/metronic/css/styles.css}" rel="stylesheet"/>
+</head>
+<body class="antialiased flex h-full text-base text-foreground bg-background [--header-height:54px] [--sidebar-width:200px]">
+<!-- Theme Mode -->
+<script>
+    const defaultThemeMode = 'light'; // light|dark|system
+    let themeMode;
+
+    if (document.documentElement) {
+        if (localStorage.getItem('kt-theme')) {
+            themeMode = localStorage.getItem('kt-theme');
+        } else if (
+            document.documentElement.hasAttribute('data-kt-theme-mode')
+        ) {
+            themeMode =
+                document.documentElement.getAttribute('data-kt-theme-mode');
+        } else {
+            themeMode = defaultThemeMode;
+        }
+
+        if (themeMode === 'system') {
+            themeMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+        }
+
+        document.documentElement.classList.add(themeMode);
+    }
+</script>
+<!-- End of Theme Mode -->
+<!-- Page -->
+<!-- Main -->
+<div class="flex grow flex-col in-data-kt-[sticky-header=on]:pt-(--header-height)">
+    <!-- Header -->
+    <header class="flex items-center transition-[height] shrink-0 bg-background h-(--header-height)"
+            data-kt-sticky="true"
+            data-kt-sticky-class="transition-[height] fixed z-10 top-0 left-0 right-0 shadow-xs backdrop-blur-md bg-white/70 dark:bg-background/70 border-b border-border"
+            data-kt-sticky-name="header" data-kt-sticky-offset="100px" id="header">
+        <!-- Container -->
+        <div class="kt-container-fluid flex flex-wrap justify-between items-center lg:gap-4" id="header_container">
+            <!-- Logo -->
+            <div class="flex items-center gap-2 lg:gap-5">
+                <button class="kt-btn kt-btn-icon kt-btn-ghost -ms-2 lg:hidden" data-kt-drawer-toggle="#sidebar">
+                    <i class="ki-filled ki-menu">
+                    </i>
+                </button>
+                <a href="html/demo5.html">
+                    <img class="dark:hidden min-h-[34px]" src="assets/metronic/media/app/mini-logo-circle.svg"/>
+                    <img class="hidden dark:inline-block min-h-[34px]"
+                         src="assets/media/app/mini-logo-circle-dark.svg"/>
+                </a>
+
+            </div>
+            <!-- End of Logo -->
+
+        </div>
+        <!-- End of Container -->
+    </header>
+    <!-- End of Header -->
+    <!-- Navbar -->
+    <div class="bg-background border-y border-t border-border mb-5 lg:mb-10">
+        <!-- Container -->
+        <div class="kt-container-fluid flex flex-wrap justify-between items-center gap-2">
+            <div class="grid">
+                <div class="kt-scrollable-x-auto">
+                    <div class="kt-menu flex-col lg:flex-row gap-5 lg:gap-7.5" data-kt-menu="true" id="mega_menu">
+                        <div th:each="m : ${menuItems}"
+                             th:with="url=@{${m.href}}"
+                             class="kt-menu-item py-3.5 border-b border-transparent kt-menu-item-active:border-b-mono kt-menu-item-here:border-b-mono"
+                             th:classappend="${currentPath != null and #strings.startsWith(currentPath, url)} ? ' kt-menu-item-active kt-menu-item-here' : ''">
+                            <a class="kt-menu-link gap-2.5" th:href="@{${m.href}}">
+                              <span class="kt-menu-title text-nowrap font-medium text-sm text-secondary-foreground
+                                           kt-menu-item-active:text-mono kt-menu-item-active:font-medium kt-menu-link-hover:text-mono"
+                                    th:text="${m.title}">
+                                Item
+                              </span>
+                            </a>
+                        </div>
+                        <div class="kt-menu-item py-3.5 border-b border-transparent kt-menu-item-active:border-b-mono kt-menu-item-here:border-b-mono">
+                            <a href="#" class="kt-menu-link gap-2.5"
+                               onclick="document.getElementById('logoutForm').submit(); return false;">
+    <span class="kt-menu-title text-nowrap font-medium text-sm text-secondary-foreground kt-menu-item-active:text-mono kt-menu-item-active:font-medium kt-menu-link-hover:text-mono">
+      Logout
+    </span>
+                            </a>
+
+                            <form id="logoutForm" th:action="@{/logout}" method="post" style="display:none">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- End of Container -->
+    </div>
+    <!-- End of Navbar -->
+    <!-- Wrapper Container -->
+    <div class="container-fixed w-full flex px-0 lg:ps-4">
+        <!-- Content -->
+        <main class="flex flex-col grow" id="content" role="content">
+
+            <!-- End of Toolbar -->
+            <!-- Container -->
+            <div th:replace="${template}"/>
+            <!-- End of Container -->
+            <!-- Footer -->
+            <footer class="footer">
+                <!-- Container -->
+                <div class="kt-container-fluid">
+                    <div class="flex flex-col md:flex-row justify-center md:justify-between items-center gap-3 py-5">
+                        <div class="flex order-2 md:order-1 gap-2 font-normal text-sm">
+                             <span class="text-muted-foreground">
+                              2025©
+                             </span>
+                        </div>
+                    </div>
+                </div>
+                <!-- End of Container -->
+            </footer>
+            <!-- End of Footer -->
+        </main>
+        <!-- End of Content -->
+    </div>
+    <!-- End of Wrapper Container -->
+</div>
+<!-- End of Main -->
+
+
+<!-- End of Page -->
+<!-- Scripts -->
+<script th:src="@{/assets/metronic/js/core.bundle.js}"></script>
+<script th:src="@{/assets/metronic/vendors/ktui/ktui.min.js}"/>
+<script th:src="@{/assets/metronic/vendors/apexcharts/apexcharts.min.js}"/>
+<script th:src="@{/assets/metronic/js/widgets/general.js}"/>
+<!-- End of Scripts -->
+</body>
+</html>

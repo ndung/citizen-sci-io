@@ -1,0 +1,46 @@
+jwt:
+  secret: 
+  expiration: -1
+app:
+  storage:
+    type: s3
+    local:
+      base-path: /var/app/uploads
+      base-url:  http://localhost:8080/file/
+    s3:
+      bucket: citizen-science-io
+      region: ap-southeast-3
+      prefix: uploads/
+      url-minutes: 10
+      access-key: 
+      secret-key: 
+server:
+  port: 8080
+  error:
+    whitelabel:
+      enabled: true
+spring:
+  datasource:
+    url: 
+    username: 
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+  thymeleaf:
+    cache: false
+  web:
+    resources:
+      static-locations: classpath:/static/

@@ -1,0 +1,97 @@
+<!-- templates/login.html -->
+<!DOCTYPE html>
+<html class="h-full" data-kt-theme="true" data-kt-theme-mode="light" dir="ltr" lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <!-- Metronic CSS (same paths as original) -->
+    <link rel="stylesheet" th:href="@{/assets/metronic/vendors/apexcharts/apexcharts.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/metronic/vendors/keenicons/styles.bundle.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/metronic/css/styles.css}"/>
+    <title>Sign in</title>
+</head>
+<body class="antialiased flex h-full text-base text-foreground bg-background">
+<!-- (Optional) Theme-mode script from the demo -->
+<script>
+    const defaultThemeMode = 'light';
+    let themeMode = localStorage.getItem('kt-theme') ??
+        (document.documentElement.hasAttribute('data-kt-theme-mode')
+            ? document.documentElement.getAttribute('data-kt-theme-mode')
+            : defaultThemeMode);
+    if (themeMode === 'system') {
+        themeMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    document.documentElement.classList.add(themeMode);
+</script>
+
+<style>
+    /* Optional page background (remove if you don't use the demo images) */
+    .page-bg { background-image: url('/assets/metronic/media/images/2600x1200/bg-10.png'); }
+    .dark .page-bg { background-image: url('/assets/metronic/media/images/2600x1200/bg-10-dark.png'); }
+</style>
+
+<div class="flex items-center justify-center grow bg-center bg-no-repeat page-bg">
+    <div class="kt-card max-w-[370px] w-full">
+        <form th:action="@{/login}" method="post" id="sign_in_form"
+              class="kt-card-content flex flex-col gap-5 p-10">
+            <!-- CSRF -->
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+            <!-- Alerts -->
+            <div th:if="${param.error}" class="kt-badge kt-badge-sm kt-badge-warning kt-badge-outline">Invalid username or password.</div>
+            <div th:if="${param.logout}" class="kt-badge kt-badge-sm kt-badge-success kt-badge-outline">You have been logged out.</div>
+
+            <div class="text-center mb-2.5">
+                <h3 class="text-lg font-medium text-mono leading-none mb-2.5">Sign in</h3>
+                <div class="flex items-center justify-center font-medium">
+                    <!--span class="text-sm text-secondary-foreground me-1.5">Need an account?</span>
+                    <a class="text-sm link" th:href="@{/register}">Sign up</a-->
+                </div>
+            </div>
+
+            <!-- Username -->
+            <div class="flex flex-col gap-1">
+                <label class="kt-form-label font-normal text-mono">Username</label>
+                <input class="kt-input" name="username" placeholder="Enter Username" type="text"
+                       required autofocus/>
+            </div>
+
+            <!-- Password (with KT toggle) -->
+            <div class="flex flex-col gap-1">
+                <div class="flex items-center justify-between gap-1">
+                    <label class="kt-form-label font-normal text-mono">Password</label>
+                    <!--a class="text-sm kt-link shrink-0" th:href="@{/forgot-password}">Forgot Password?</a-->
+                </div>
+                <div class="kt-input" data-kt-toggle-password="true">
+                    <input name="password" placeholder="Enter Password" type="password" required/>
+                    <button class="kt-btn kt-btn-sm kt-btn-ghost kt-btn-icon bg-transparent! -me-1.5"
+                            data-kt-toggle-password-trigger="true" type="button">
+                        <span class="kt-toggle-password-active:hidden"><i class="ki-filled ki-eye text-muted-foreground"></i></span>
+                        <span class="hidden kt-toggle-password-active:block"><i class="ki-filled ki-eye-slash text-muted-foreground"></i></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Remember me -->
+            <label class="kt-label">
+                <input class="kt-checkbox kt-checkbox-sm" name="remember-me" type="checkbox" value="on"/>
+                <span class="kt-checkbox-label">Remember me</span>
+            </label>
+
+            <input type="hidden" th:if="${_csrf != null}"
+                   th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+            <!-- Submit -->
+            <button class="kt-btn kt-btn-primary flex justify-center grow" type="submit">Sign In</button>
+        </form>
+    </div>
+</div>
+
+<!-- Metronic core scripts (same paths as original demo) -->
+<script th:src="@{/assets/metronic/js/core.bundle.js}"></script>
+<script th:src="@{/assets/metronic/vendors/ktui/ktui.min.js}"></script>
+<script th:src="@{/assets/metronic/vendors/apexcharts/apexcharts.min.js}"></script>
+</body>
+</html>

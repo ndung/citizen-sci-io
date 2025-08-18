@@ -1,0 +1,261 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: layout (~{::body},'index')}">
+<body>
+<div class="kt-container-fluid px-0">
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-5 lg:gap-7.5">
+        <div class="flex flex-col gap-5 lg:gap-7.5">
+            <div class="kt-badge kt-badge-sm kt-badge-success kt-badge-outline" th:if="${querySaved}">
+                Query saved successfully.
+            </div>
+            <div class="kt-card min-w-full">
+                <div class="kt-card-header">
+                    <h3 class="kt-card-title" th:text="${query.id == null}? 'Create Question' : 'Edit Question'"></h3>
+                </div>
+
+                <form th:action="@{${query.id == null} ? '/questions' : '/questions/' + ${query.id}}"
+                      th:object="${query}" method="post"
+                      class="kt-card-content grid gap-5">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                    <div class="flex items-baseline gap-2.5">
+                        <label class="kt-form-label w-40">Sequence</label>
+                        <input class="kt-input" type="number" th:field="*{sequence}"/>
+                    </div>
+                    <div th:if="${#fields.hasErrors('sequence')}">
+                        <span class="kt-badge kt-badge-sm kt-badge-warning kt-badge-outline" th:errors="*{sequence}">sequence error</span>
+                    </div>
+
+                    <!-- simple fields -->
+                    <div class="flex items-baseline gap-2.5">
+                        <label class="kt-form-label w-40">Attribute name</label>
+                        <input class="kt-input" type="text" th:field="*{attribute}"/>
+                    </div>
+                    <div th:if="${#fields.hasErrors('attribute')}">
+                        <span class="kt-badge kt-badge-sm kt-badge-warning kt-badge-outline" th:errors="*{attribute}">attribute error</span>
+                    </div>
+
+                    <div class="flex items-baseline gap-2.5">
+                        <label class="kt-form-label w-40">Question</label>
+                        <input class="kt-input" type="text" th:field="*{question}"/>
+                    </div>
+                    <div th:if="${#fields.hasErrors('question')}">
+                        <span class="kt-badge kt-badge-sm kt-badge-warning kt-badge-outline" th:errors="*{question}">question error</span>
+                    </div>
+
+                    <div class="flex items-baseline gap-2.5">
+                        <label class="kt-form-label w-40">Type</label>
+                        <select class="kt-input" id="type" th:field="*{type}">
+                            <option th:each="entry : ${typeOptions}"
+                                    th:value="${entry.key}"
+                                    th:text="${entry.value}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-baseline gap-2.5">
+                        <label class="kt-form-label w-40">Enabled</label>
+                        <input type="checkbox" th:field="*{enabled}"/>
+                    </div>
+
+                    <div class="flex items-center gap-2.5">
+                        <label class="kt-form-label w-40">Required</label>
+                        <input type="checkbox" th:field="*{required}"/>
+                    </div>
+
+                    <!-- section dropdown -->
+                    <div class="flex items-baseline gap-2.5">
+                        <label class="kt-form-label w-40">Section</label>
+                        <select class="kt-input" th:field="*{sectionId}">
+                            <option th:each="s : ${sections}" th:value="${s.id}" th:text="${s.name}"></option>
+                        </select>
+                    </div>
+
+                    <!-- hidden prototype row -->
+                    <template id="rowTemplate">
+                        <tr>
+                            <td class="rowNumber"></td>
+                            <td class="text-sm text-foreground font-normal"><input class="kt-input" type="number"
+                                                                                   name="options[__index__].sequence"/>
+                            </td>
+                            <td class="text-sm text-foreground font-normal"><input class="kt-input" type="text"
+                                                                                   name="options[__index__].description"/>
+                            </td>
+                            <td><input type="checkbox" name="options[__index__].enabled"/></td>
+                            <td>
+                                <button type="button" class="remove btn">✖</button>
+                            </td>
+                            <!--td class="text-sm text-foreground font-normal"><input type="hidden" class="kt-input" name="options[__index__].id"/></td-->
+                        </tr>
+                    </template>
+
+                    <!-- Parameter grid -->
+                    <div>
+                        <div class="flex flex-wrap items-center gap-5 justify-between">
+                            <div class="flex items-center gap-2.5">
+                                <h3 class="kt-card-title">Options</h3>
+                            </div>
+                            <div class="flex gap-2.5">
+                                <a id="addRow" class="kt-btn kt-btn-primary inline-flex items-center gap-2">
+                                    <i class="ki-filled ki-plus"></i><span>New</span>
+                                </a></div>
+                        </div>
+                        <br/>
+                        <table id="itemsTable" class="kt-table">
+                            <thead>
+                            <tr>
+                                <th class="min-w-12">#</th>
+                                <th class="min-w-12">Sequence</th>
+                                <th class="min-w-52">Description</th>
+                                <th class="min-w-12">Enabled</th>
+                                <th class="min-w-12"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="p, stat : *{options}">
+                                <td class="rowNumber" th:text="${stat.index + 1}">1</td>
+                                <td>
+                                    <input class="kt-input" type="number"
+                                           th:field="*{options[__${stat.index}__].sequence}"/>
+                                </td>
+                                <td>
+                                    <input class="kt-input w-full" type="text"
+                                           th:field="*{options[__${stat.index}__].description}"/>
+                                </td>
+                                <td>
+                                    <input type="checkbox" th:field="*{options[__${stat.index}__].enabled}"/>
+                                </td>
+                                <td>
+                                    <input class="kt-input w-full" type="hidden"
+                                           th:field="*{options[__${stat.index}__].id}"/>
+                                </td>
+                                <!--td style="width: 5%"><button type="button" class="remove btn">✖</button></td-->
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="flex justify-end gap-2">
+                        <a th:if="${query.id != null}"
+                           th:href="@{/projects}" class="kt-btn">Cancel edit</a>
+                        <button class="kt-btn kt-btn-primary"
+                                th:text="${query.id == null} ? 'Create' : 'Save Changes'">Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-span-2">
+            <div class="kt-card">
+                <div class="kt-card-header flex items-center justify-between">
+                    <h3 class="kt-card-title">Text Questions</h3>
+                </div>
+
+                <div class="kt-card-content">
+                    <link rel="stylesheet"
+                          th:href="@{https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css}"/>
+
+                    <div class="table-responsive">
+                        <table id="questionsTable" class="display table w-full min-w-[1000px]">
+                            <thead>
+                            <tr class="whitespace-nowrap">
+                                <th>Sequence</th>
+                                <th>Attribute</th>
+                                <th>Question</th>
+                                <th>Type</th>
+                                <th>Enabled</th>
+                                <th>Required</th>
+                                <th>Options</th>
+                                <th>Section</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="q : ${queries}" class="whitespace-nowrap">
+                                <td style="width:5%" th:text="${q.sequence}">1</td>
+                                <td style="width:10%" th:text="${q.attribute}">attr</td>
+                                <td style="width:20%" th:text="${q.question}">Question?</td>
+                                <td style="width:10%" th:text="${q.type}">1</td>
+                                <td style="width:5%" th:text="${q.enabled}">true</td>
+                                <td style="width:5%" th:text="${q.required}">true</td>
+                                <td style="width:25%" th:text="${q.options}">true</td>
+                                <td style="width:10%" th:text="${q.section != null ? q.section.name : '-'}">Section</td>
+                                <td style="width:10%" class="flex gap-2">
+                                    <a th:href="@{|/questions/${q.id}/edit|}" class="kt-btn kt-btn-light">Edit</a>
+                                    <!--form th:action="@{|/questions/${q.id}/delete|}" method="post"
+                                          onsubmit="return confirm('Delete?');">
+                                        <input type="hidden" th:name="${_csrf.parameterName}"
+                                               th:value="${_csrf.token}"/>
+                                        <button class="kt-btn kt-btn-danger">Del</button>
+                                    </form-->
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <script th:src="@{https://code.jquery.com/jquery-3.7.1.min.js}"></script>
+            <script th:src="@{https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js}"></script>
+            <script>
+                $(function () {
+                    $('#questionsTable').DataTable({
+                        scrollX: true,        // enable horizontal scrolling
+                        autoWidth: false,     // keep your widths; don’t auto-expand
+                        columnDefs: [
+                            {targets: '_all', className: 'whitespace-nowrap'}
+                        ]
+                    });
+                });
+            </script>
+        </div>
+    </div>
+</div>
+<script>
+    (() => {
+        const tableBody = document.querySelector('#itemsTable tbody');
+        const addBtn = document.getElementById('addRow');
+        //const template   = document.getElementById('rowTemplate').content;
+        const template = document.getElementById('rowTemplate').innerHTML;
+
+        // helper: renumber rows & fix name indices after each change
+        function refreshRows() {
+            tableBody.querySelectorAll('tr').forEach((tr, i) => {
+                tr.querySelector('.rowNumber').textContent = (i + 1);
+                tr.querySelectorAll('input').forEach(inp => {
+                    inp.name = inp.name.replace(/\[\d+]/, `[${i}]`);
+                });
+            });
+        }
+
+        function renumber() {
+            tableBody.querySelectorAll('tr').forEach((tr, i) => {
+                tr.querySelector('.rowNumber').textContent = i + 1;
+                tr.querySelectorAll('input').forEach(inp => {
+                    inp.name = inp.name.replace(/\[\d+]/, `[${i}]`);
+                });
+            });
+        }
+
+        addBtn.addEventListener('click', () => {
+            /**const clone = document.importNode(template, true);
+             tableBody.appendChild(clone);
+             refreshRows();*/
+            const idx = tableBody.querySelectorAll('tr').length;   // next index
+            const html = template.replace(/__index__/g, idx);   // swap token
+            tableBody.insertAdjacentHTML('beforeend', html);
+            renumber();
+        });
+
+
+        tableBody.addEventListener('click', e => {
+            if (e.target.matches('.remove')) {
+                e.target.closest('tr').remove();
+                renumber();//refreshRows();
+            }
+        });
+    })();
+</script>
+</body>
+</html>

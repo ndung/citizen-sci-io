@@ -1,0 +1,19 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout (~{::body},'index')}">
+<body>
+<div class="flex flex-col items-center justify-center h-[95%]">
+    <div class="mb-10">
+        <img alt="image" class="dark:hidden max-h-[160px]" src="assets/metronic/media/illustrations/6.svg"/>
+        <img alt="image" class="light:hidden max-h-[160px]" src="assets/metronic/media/illustrations/6-dark.svg"/>
+    </div>
+    <span class="kt-badge kt-badge-primary kt-badge-outline mb-3">
+       405 Error
+      </span>
+    <h3 class="text-2xl font-semibold text-mono text-center mb-2">
+        Method Not Allowed
+    </h3>
+    <div class="text-base text-center text-secondary-foreground mb-10">
+        You do not have permission to access this resource.
+    </div>
+</div>
+</body>

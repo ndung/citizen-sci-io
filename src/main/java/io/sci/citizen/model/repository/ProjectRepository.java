@@ -1,0 +1,13 @@
+package io.sci.citizen.model.repository;
+
+import io.sci.citizen.model.Project;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface ProjectRepository extends JpaRepository<Project, Long> {
+
+    List<Project> findProjectsByCreator_IdOrderByCreatedAtDesc(Long userId);
+
+    List<Project> findProjectsByPubliclyAvailable(boolean publiclyAvailable);
+}
