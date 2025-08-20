@@ -103,6 +103,6 @@ public class Project {
 
     @Transient
     public String getIconUrl(){
-        return "https://citizen-sci-io-c296af702ec9.herokuapp.com/"+icon;
+        return "https://citizen-sci-io-c296af702ec9.herokuapp.com/files/"+icon;
     }
 }
