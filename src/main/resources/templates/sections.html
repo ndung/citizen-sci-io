@@ -99,14 +99,22 @@
                             <tr th:each="s : ${sections}" class="whitespace-nowrap">
                                 <td style="width:10%" th:text="${s.sequence}">1</td>
                                 <td style="width:50%" th:text="${s.name}">Name</td>
-                                <td style="width:20%" th:text="${s.type}">TYPE</td>
+                                <td style="width:20%"
+									th:text="${s.type == 'survey' ? 'TXT' : (s.type == 'image' ? 'IMG' : (s.type == 'location' ? 'LOC' : s.type))}">
+									TYPE
+								</td>
                                 <td style="width:10%"><span th:text="${s.enabled} ? 'Yes' : 'No'">Yes</span></td>
                                 <td th:text="${s.project != null ? (s.project.name != null ? s.project.name : 'Project ' + s.project.id) : '-'}">
                                     -
                                 </td>
                                 <td style="width:10%" class="flex gap-2">
                                     <a th:href="@{|/sections/${s.id}/edit|}" class="kt-btn kt-btn-light">Edit</a>
-                                    <a th:href="@{|/sections/${s.id}/config|}" class="kt-btn kt-btn-light">Config</a>
+									<a th:if="${s.type == 'survey'}" th:href="@{|/sections/${s.id}/config|}" class="kt-btn kt-btn-light">Config</a>
+									<span th:unless="${s.type == 'survey'}"
+										  class="kt-btn kt-btn-light"
+										  aria-disabled="true"
+										  style="pointer-events:none;opacity:.5"
+										  title="Config only available for text">Config</span>
                                     <!--form th:action="@{|/sections/${s.id}/delete|}" method="post"
                                           onsubmit="return confirm('Delete this section?');">
                                         <input type="hidden" th:if="${_csrf != null}"

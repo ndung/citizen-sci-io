@@ -31,11 +31,14 @@ public class TextQueryController {
 
     private Map<Integer,String> typeOptions() {
         return new LinkedHashMap<>() {{
-            put(1, "Introduction");
-            put(2, "Data");
-            put(3, "Analysis");
-            put(4, "Results");
-            put(5, "Appendix");
+            //put(1, "Bar");
+            put(2, "Options");
+            put(3, "String");
+            put(4, "Multiple options");
+            put(5, "Date");
+			put(6, "Free input options");
+			put(7, "Integer");
+			put(8, "Decimal");
         }};
     }
 

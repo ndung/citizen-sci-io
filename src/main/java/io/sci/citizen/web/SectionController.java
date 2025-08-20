@@ -30,11 +30,9 @@ public class SectionController {
 
     private Map<String,String> typeOptions() {
         return new java.util.LinkedHashMap<>() {{
-            put("INTRO", "Introduction");
-            put("DATA", "Data");
-            put("ANALYSIS", "Analysis");
-            put("RESULTS", "Results");
-            put("APPENDIX", "Appendix");
+            put("image", "IMG");
+            put("survey", "TXT");
+            put("location", "LOC");
         }};
     }
 
