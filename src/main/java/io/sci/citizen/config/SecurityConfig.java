@@ -55,6 +55,18 @@ public class SecurityConfig {
     }
 
     @Bean
+    public org.springframework.web.filter.CommonsRequestLoggingFilter requestLoggingFilter() {
+        var f = new org.springframework.web.filter.CommonsRequestLoggingFilter();
+        f.setIncludeClientInfo(true);
+        f.setIncludeQueryString(true);
+        f.setIncludeHeaders(true);      // true if you need headers (careful with secrets)
+        f.setIncludePayload(true);       // request body
+        f.setMaxPayloadLength(10_000);   // trim big bodies
+        f.setAfterMessagePrefix("REQUEST : ");
+        return f;
+    }
+
+    @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
