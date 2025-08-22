@@ -27,7 +27,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
             throws ServletException, IOException {
         String token = req.getHeader("Authorization");
-        System.out.println("token: " + token);
         if (token != null) {
             var username = jwt.getUsername(token);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

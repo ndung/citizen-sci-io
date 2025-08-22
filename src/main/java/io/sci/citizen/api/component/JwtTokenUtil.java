@@ -49,7 +49,11 @@ public class JwtTokenUtil {
     public boolean isValid(String token, UserDetails user) {
         try {
             var claims = parseClaims(token);
-            return user.getUsername().equals(claims.getSubject()) && claims.getExpiration().after(new Date());
+            boolean expired = false;
+            if (claims.getExpiration()!=null) {
+                expired = !claims.getExpiration().after(new Date());
+            }
+            return user.getUsername().equals(claims.getIssuer()) && !expired;
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
