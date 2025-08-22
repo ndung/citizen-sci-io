@@ -3,13 +3,15 @@ package io.sci.citizen.web;
 
 import io.sci.citizen.model.Section;
 import io.sci.citizen.model.dto.SectionRequest;
-import io.sci.citizen.service.ProjectService;
 import io.sci.citizen.service.SectionService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -18,15 +20,10 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/sections")
-public class SectionController {
+public class SectionController extends BaseController{
 
-    private final SectionService service;
-    private final ProjectService projectService;
-
-    public SectionController(SectionService service, ProjectService projectService) {
-        this.service = service;
-        this.projectService = projectService;
-    }
+    @Autowired
+    private SectionService service;
 
     private Map<String,String> typeOptions() {
         return new java.util.LinkedHashMap<>() {{
@@ -48,6 +45,9 @@ public class SectionController {
                        @RequestParam(name = "sectionId", required = false) Long sectionId,
                        Model model) {
         SectionRequest form = new SectionRequest();
+        if (projectId!=null && !isAuthorized(projectId)){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
         if(sectionId!=null) {
             var entity = service.getById(sectionId);
             form.setId(entity.getId());
@@ -66,6 +66,9 @@ public class SectionController {
                          BindingResult binding,
                          RedirectAttributes ra,
                          Model model) {
+        if (form.getProjectId()!=null && !isAuthorized(form.getProjectId())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
         if (binding.hasErrors()) {
             populate(model, form.getProjectId(), form);
             return "sections";
@@ -76,8 +79,11 @@ public class SectionController {
     }
 
     @GetMapping("/{id}/edit")
-    public String editForm(@PathVariable("id") Long id, Model model) {
+    public String editForm(@PathVariable("id") Long id) {
         var entity = service.getById(id);
+        if (!isAuthorized(entity.getProject())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
         return "redirect:/sections?projectId="+entity.getProject().getId()+"&sectionId="+id;
     }
 
@@ -87,6 +93,9 @@ public class SectionController {
                          BindingResult binding,
                          RedirectAttributes ra,
                          Model model) {
+        if (form.getProjectId()!=null && !isAuthorized(form.getProjectId())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
         if (binding.hasErrors()) {
             populate(model, form.getProjectId(), form);
             return "sections";
@@ -99,6 +108,9 @@ public class SectionController {
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable("id") Long id, RedirectAttributes ra) {
         Section section = service.getById(id);
+        if (!isAuthorized(section.getProject())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
         service.delete(id);
         ra.addFlashAttribute("success", "Section deleted.");
         return "redirect:/sections?projectId="+section.getProject().getId();
@@ -106,6 +118,10 @@ public class SectionController {
 
     @GetMapping("/{id}/config")
     public String configForm(@PathVariable("id") Long id) {
+        var entity = service.getById(id);
+        if (!isAuthorized(entity.getProject())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
         return "redirect:/questions?sectionId="+id;
     }
 }

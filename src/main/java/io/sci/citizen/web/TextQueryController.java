@@ -7,10 +7,12 @@ import io.sci.citizen.model.dto.TextQueryRequest;
 import io.sci.citizen.service.SectionService;
 import io.sci.citizen.service.TextQueryService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
@@ -20,7 +22,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/questions")
-public class TextQueryController {
+public class TextQueryController extends BaseController{
 
     private final TextQueryService service;
     private final SectionService sectionService;
@@ -57,6 +59,9 @@ public class TextQueryController {
         form.getOptions().add(new QueryOptionRequest());
         if(queryId!=null) {
             var entity = service.getById(queryId);
+            if (!isAuthorized(entity.getSection().getProject())){
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            }
             form.setId(entity.getId());
             form.setSequence(entity.getSequence());
             form.setType(entity.getType());
@@ -97,6 +102,9 @@ public class TextQueryController {
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable("id") Long id) {
         var entity = service.getById(id);
+        if (!isAuthorized(entity.getSection().getProject())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
         return "redirect:/questions?sectionId="+entity.getSection().getId()+"&queryId="+id;
     }
 

@@ -1,9 +1,6 @@
 package io.sci.citizen.api.component;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.sci.citizen.model.User;
@@ -26,14 +23,16 @@ public class JwtTokenUtil {
 
     public String createToken(User user) {
         var roles = String.join(", ", user.getRoles());
-        return Jwts.builder()
+        JwtBuilder builder = Jwts.builder()
                 .id(String.valueOf(user.getId()))
                 .issuer(user.getUsername())
                 .subject(roles)
                 .setIssuedAt(new Date())
-                .setExpiration(Date.from(Instant.now().plusSeconds(expiration * 60))) // 15 minutes
-                .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret)), SignatureAlgorithm.HS256)
-                .compact();
+                .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret)), SignatureAlgorithm.HS256);
+        if (expiration >= 0) {
+            builder.setExpiration(Date.from(Instant.now().plusSeconds(expiration * 60))); // 15 minutes
+        }
+        return builder.compact();
 	}
 
 	public boolean authenticate(String token) {

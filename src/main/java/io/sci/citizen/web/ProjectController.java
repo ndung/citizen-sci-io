@@ -2,15 +2,17 @@ package io.sci.citizen.web;
 
 import io.sci.citizen.config.FileStorage;
 import io.sci.citizen.model.Project;
-import io.sci.citizen.service.ProjectService;
 import io.sci.citizen.model.dto.ProjectRequest;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
@@ -20,16 +22,10 @@ import java.util.UUID;
 
 @Controller
 @RequestMapping("/projects")
-public class ProjectController {
+public class ProjectController extends BaseController{
 
-    private final ProjectService service;
-
-    private final FileStorage storage;
-
-    public ProjectController(ProjectService service, FileStorage storage) {
-        this.service = service;
-        this.storage = storage;
-    }
+    @Autowired
+    private FileStorage storage;
 
     @PostMapping
     public String create(@Valid @ModelAttribute("project") ProjectRequest form,
@@ -39,7 +35,7 @@ public class ProjectController {
                          Model model) throws IOException, URISyntaxException {
         try {
             if (binding.hasErrors()) {
-                model.addAttribute("projects", service.findAll());
+                model.addAttribute("projects", projectService.findAll());
                 return "projects";
             }
             // upload icon if present
@@ -48,12 +44,12 @@ public class ProjectController {
                 // Put stored filename into DTO so service persists it:
                 form.setIcon(storedName);                // <-- adjust setter if your DTO differs
             }
-            Project saved = service.create(form);
+            Project saved = projectService.create(form);
             ra.addFlashAttribute("projectSaved", true);
         }catch (Exception ex) {
             ex.printStackTrace();
             binding.rejectValue("icon", "icon.invalid", ex.getMessage());
-            model.addAttribute("projects", service.findAll());
+            model.addAttribute("projects", projectService.findAll());
             return "projects";
         }
         return "redirect:/projects";
@@ -64,7 +60,7 @@ public class ProjectController {
                        Model model) {
         ProjectRequest form = new ProjectRequest();
         if(projectId!=null) {
-            var entity = service.getById(projectId);
+            var entity = projectService.getById(projectId);
             form.setId(entity.getId());
             form.setIcon(entity.getIcon());
             form.setName(entity.getName());
@@ -73,7 +69,7 @@ public class ProjectController {
             form.setDescription(entity.getDescription());
         }
         model.addAttribute("project", form);
-        model.addAttribute("projects", service.findAll());
+        model.addAttribute("projects", projectService.findAll());
         return "projects";
     }
 
@@ -85,22 +81,25 @@ public class ProjectController {
                          RedirectAttributes ra,
                          Model model) {
         try {
+            if (!isAuthorized(id)){
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            }
             if (binding.hasErrors()) {
-                model.addAttribute("projects", service.findAll());
+                model.addAttribute("projects", projectService.findAll());
             }
             if (iconFile != null && !iconFile.isEmpty()) {
                 String storedName = storeIcon(iconFile);
                 form.setIcon(storedName);
             }
-            service.update(id, form);
+            projectService.update(id, form);
             ra.addFlashAttribute("projectSaved", true);
         }catch (URISyntaxException ex) {
             binding.rejectValue("icon", "icon.invalid", ex.getMessage());
-            model.addAttribute("projects", service.findAll());
+            model.addAttribute("projects", projectService.findAll());
             return "projects";
         } catch (IOException ex) {
             binding.rejectValue("icon", "icon.io", "Failed to store icon file.");
-            model.addAttribute("projects", service.findAll());
+            model.addAttribute("projects", projectService.findAll());
             return "projects";
         }
         return "redirect:/projects";
@@ -108,12 +107,17 @@ public class ProjectController {
 
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable("id") Long id) {
-        var entity = service.getById(id);
-        return "redirect:/projects?projectId="+entity.getId();
+        if (!isAuthorized(id)){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+        return "redirect:/projects?projectId="+id;
     }
 
     @GetMapping("/{id}/config")
     public String configForm(@PathVariable("id") Long id) {
+        if (!isAuthorized(id)){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
         return "redirect:/sections?projectId="+id;
     }
 
