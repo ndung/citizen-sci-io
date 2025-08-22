@@ -55,6 +55,16 @@ public class Data implements Serializable {
     @OneToMany(mappedBy="data", cascade = {CascadeType.ALL})
     private List<QueryReply> surveyResponses;
 
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "verificator_id")
+    @NotFound(action = NotFoundAction.IGNORE)
+    private User verificator;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "verified_at")
+    private Date verifiedAt;
+
     public Long getId() {
         return id;
     }
@@ -151,5 +161,21 @@ public class Data implements Serializable {
 
     public List<QueryReply> getSurveyResponses() {
         return surveyResponses;
+    }
+
+    public User getVerificator() {
+        return verificator;
+    }
+
+    public void setVerificator(User verificator) {
+        this.verificator = verificator;
+    }
+
+    public Date getVerifiedAt() {
+        return verifiedAt;
+    }
+
+    public void setVerifiedAt(Date verifiedAt) {
+        this.verifiedAt = verifiedAt;
     }
 }

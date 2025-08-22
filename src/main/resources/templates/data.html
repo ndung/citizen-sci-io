@@ -6,7 +6,7 @@
 <div class="kt-container-fluid">
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-5 lg:gap-7.5">
 
-        <div class="col-span-7">
+        <div class="col-span-2">
             <div class="kt-card">
                 <div class="kt-card-header">
                     <h3 class="kt-card-title">Data</h3>
@@ -24,9 +24,7 @@
                                 <th>No.</th>
                                 <th>Created At</th>
                                 <th>Creator</th>
-                                <th>Latitude</th>
-                                <th>Longitude</th>
-                                <th>Image</th>
+                                <th>Project</th>
                                 <th>Actions</th>
                                 <th>Verificator</th>
                                 <th>Verification Time</th>
@@ -36,15 +34,15 @@
                             <!-- SSR fallback if JS disabled -->
                             <tr th:each="d : ${data}">
                                 <td style="width:5%">Example</td>
-                                <td style="width:10%"><span th:text="${#dates.format(d.createdAt, 'dd MMM yyyy, HH:mm')}"></span></td>
-                                <td style="width:10%">d.user.fullName</td>
-                                <td style="width:10%">d.latitude</td>
-                                <td style="width:10%">d.longitude</td>
-                                <td style="width:10%"><span th:text="${#dates.format(p.createdAt, 'dd MMM yyyy, HH:mm')}"></span></td>
-                                <td style="width:10%">
+                                <td style="width:15%"><span th:text="${#dates.format(d.createdAt, 'dd MMM yyyy, HH:mm')}"></span></td>
+                                <td style="width:15%">d.user.fullName</td>
+                                <td style="width:15%">d.project.name</td>
+                                <td style="width:20%">
                                     <a th:href="@{|/data/${d.id}|}"
                                        class="kt-btn kt-btn-light">Detail</a>
                                 </td>
+                                <td style="width:15%">d.verificator.fullName</td>
+                                <td style="width:15%"><span th:text="${#dates.format(d.verifiedAt, 'dd MMM yyyy, HH:mm')}"></span></td>
                             </tr>
                             </tbody>
                         </table>
