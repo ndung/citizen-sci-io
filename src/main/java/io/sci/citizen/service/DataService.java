@@ -11,12 +11,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class DataService extends BaseService{
+public class DataService extends BaseService {
 
     private final DataRepository dataRepo;
 
@@ -27,32 +28,62 @@ public class DataService extends BaseService{
         this.projectRepo = projectRepo;
     }
 
-    @Transactional(readOnly = true)
-    public List<Data> findAll(Long projectId) {
-        if (projectId==null){
-            if (isAdmin()){
-                return dataRepo.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
-            }else{
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-            }
-        }else{
-            if (!isAdmin()){
-                User user = getUser();
-                Optional<Project> opt = projectRepo.findById(projectId);
-                if (opt.isPresent() && !Objects.equals(opt.get().getCreator().getId(), user.getId())){
-                    throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-                }
-            }
-            return dataRepo.findByProject_IdOrderByCreatedAtDesc(projectId);
-        }
+    public List<Integer> getProjectSummary(Long projectId){
+        Integer user = dataRepo.getUserCountByProjectId(projectId);
+        Integer record = dataRepo.getRecordCountByProjectId(projectId);
+        return List.of(user, record);
     }
 
-    public void updateStatus(Long id, int status){
-        Optional<Data> opt = dataRepo.findById(id);
-        if (opt.isEmpty()){
+    @Transactional(readOnly = true)
+    public List<Data> findAll() {
+        if (!isAdmin()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+        return dataRepo.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Data> findAll(Long projectId) {
+        if (!isAdmin()) {
+            User user = getUser();
+            Optional<Project> opt = projectRepo.findById(projectId);
+            if (opt.isPresent() && !Objects.equals(opt.get().getCreator().getId(), user.getId())) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            }
+        }
+        return dataRepo.findByProject_IdOrderByCreatedAtDesc(projectId);
+    }
+
+    @Transactional(readOnly = true)
+    public Data getById(Long id) {
+        Data data = dataRepo.findById(id).orElse(null);
+        if (data == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+        if (!isAdmin()) {
+            User user = getUser();
+            if (!Objects.equals(data.getProject().getCreator().getId(), user.getId())) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            }
+        }
+        return data;
+    }
+
+    @Transactional
+    public void updateStatus(Long id, int status) {
+        Optional<Data> opt = dataRepo.findById(id);
+        if (opt.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        if (!isAdmin()) {
+            User user = getUser();
+            if (!Objects.equals(opt.get().getProject().getCreator().getId(), user.getId())) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            }
+        }
         Data data = opt.get();
+        data.setVerificator(getUser());
+        data.setVerifiedAt(new Date());
         data.setStatus(status);
         dataRepo.save(data);
     }

@@ -108,10 +108,23 @@
                             <tbody>
                             <!-- SSR fallback if JS disabled -->
                             <tr th:each="p : ${projects}">
-                                <td style="width:20%" th:text="${p.name}">Example</td>
+                                <td style="width:20%">
+                                    <a class="text-base font-medium text-mono hover:text-primary mb-px"
+                                       th:href="@{/data/{slug}(slug=${p.id})}" th:text="${p.name}"></a>
+                                </td>
                                 <td style="width:30%" th:text="${p.description}">Desc</td>
-                                <td style="width:10%"><span th:text="${p.enabled} ? 'Yes' : 'No'">Yes</span></td>
-                                <td style="width:10%"><span th:text="${p.publiclyAvailable} ? 'Yes' : 'No'">Yes</span></td>
+                                <td style="width:10%">
+                                    <span th:if="${p.enabled == false}"
+                                          class="kt-badge kt-badge-sm kt-badge-outline kt-badge-destructive">No</span>
+                                    <span th:if="${p.enabled == true}"
+                                          class="kt-badge kt-badge-sm kt-badge-outline kt-badge-success">Yes</span>
+                                </td>
+                                <td style="width:10%">
+                                    <span th:if="${p.publiclyAvailable == false}"
+                                          class="kt-badge kt-badge-sm kt-badge-outline kt-badge-destructive">No</span>
+                                    <span th:if="${p.publiclyAvailable == true}"
+                                          class="kt-badge kt-badge-sm kt-badge-outline kt-badge-success">Yes</span>
+                                </td>
                                 <td style="width:10%" th:text="${p.creator}">Creator</td>
                                 <td style="width:10%"><span th:text="${#dates.format(p.createdAt, 'dd MMM yyyy, HH:mm')}"></span></td>
                                 <td style="width:10%">

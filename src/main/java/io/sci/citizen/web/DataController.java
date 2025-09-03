@@ -17,6 +17,12 @@ public class DataController {
         this.service = service;
     }
 
+    @GetMapping()
+    public String list(Model model) {
+        model.addAttribute("data", service.findAll());
+        return "data";
+    }
+
     @GetMapping("/{id}")
     public String list(@PathVariable("id") Long projectId,
                        Model model) {

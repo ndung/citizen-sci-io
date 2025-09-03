@@ -103,7 +103,12 @@
 									th:text="${s.type == 'survey' ? 'TXT' : (s.type == 'image' ? 'IMG' : (s.type == 'location' ? 'LOC' : s.type))}">
 									TYPE
 								</td>
-                                <td style="width:10%"><span th:text="${s.enabled} ? 'Yes' : 'No'">Yes</span></td>
+                                <td style="width:10%">
+                                    <span th:if="${s.enabled == false}"
+                                          class="kt-badge kt-badge-sm kt-badge-outline kt-badge-destructive">No</span>
+                                    <span th:if="${s.enabled == true}"
+                                          class="kt-badge kt-badge-sm kt-badge-outline kt-badge-success">Yes</span>
+                                </td>
                                 <td th:text="${s.project != null ? (s.project.name != null ? s.project.name : 'Project ' + s.project.id) : '-'}">
                                     -
                                 </td>

@@ -1,7 +1,6 @@
 package io.sci.citizen.web;
 
 import io.sci.citizen.model.QueryOption;
-import io.sci.citizen.model.TextQuery;
 import io.sci.citizen.model.dto.QueryOptionRequest;
 import io.sci.citizen.model.dto.TextQueryRequest;
 import io.sci.citizen.service.SectionService;
@@ -33,14 +32,14 @@ public class TextQueryController extends BaseController{
 
     private Map<Integer,String> typeOptions() {
         return new LinkedHashMap<>() {{
-            //put(1, "Bar");
-            put(2, "Options");
-            put(3, "String");
-            put(4, "Multiple options");
+            //put(1, "Seek bar");
+            put(2, "Radio buttons");
+            put(3, "String text field");
+            put(4, "Check boxes");
             put(5, "Date");
-			put(6, "Free input options");
-			put(7, "Integer");
-			put(8, "Decimal");
+			put(6, "Free options input");
+			put(7, "Free integer input");
+			put(8, "Free decimal input");
         }};
     }
 

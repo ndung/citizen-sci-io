@@ -4,19 +4,19 @@
 <div class="kt-container-fluid">
     <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-7.5">
 
-        <div th:each="project : ${projects}" class="kt-card flex flex-col gap-5 p-5 lg:p-7.5">
+        <div th:each="p : ${projects}" class="kt-card flex flex-col gap-5 p-5 lg:p-7.5">
             <div class="flex items-center flex-wrap justify-between gap-1">
                 <div class="flex items-center gap-2.5">
                     <div class="relative size-[44px] shrink-0">
-                        <img alt="" class="size-12" th:src="${project.iconUrl}"/>
+                        <img alt="" class="size-12" th:src="${p.project().iconUrl}"/>
                     </div>
 
                     <div class="flex flex-col">
                         <a class="text-base font-medium text-mono hover:text-primary mb-px"
-                           th:href="@{/data/{slug}(slug=${project.id})}"
-                           th:text="${project.name}"></a>
+                           th:href="@{/data/{slug}(slug=${p.project().id})}"
+                           th:text="${p.project().name}"></a>
                         <span class="text-sm text-secondary-foreground"
-                              th:text="${project.creator.fullName}"></span>
+                              th:text="${p.project().creator.fullName}"></span>
                     </div>
                 </div>
 
@@ -34,21 +34,15 @@
 
                         <div class="kt-menu-dropdown kt-menu-default w-full max-w-[175px]" data-kt-menu-dismiss="true">
                             <div class="kt-menu-item">
-                                <a class="kt-menu-link" th:href="@{/projects/{slug}/edit(slug=${project.id})}">
+                                <a class="kt-menu-link" th:href="@{/projects/{slug}/edit(slug=${p.project().id})}">
                                     <span class="kt-menu-icon"><i class="ki-filled ki-message-edit"></i></span>
                                     <span class="kt-menu-title">Edit</span>
                                 </a>
                             </div>
                             <div class="kt-menu-item">
-                                <a class="kt-menu-link" th:href="@{/projects/{slug}/config(slug=${project.id})}">
+                                <a class="kt-menu-link" th:href="@{/projects/{slug}/config(slug=${p.project().id})}">
                                     <span class="kt-menu-icon"><i class="ki-filled ki-setting"></i></span>
                                     <span class="kt-menu-title">Configure</span>
-                                </a>
-                            </div>
-                            <div class="kt-menu-item">
-                                <a class="kt-menu-link" th:href="@{/projects/{slug}/train(slug=${project.id})}">
-                                    <span class="kt-menu-icon"><i class="ki-filled ki-data"></i></span>
-                                    <span class="kt-menu-title">Train</span>
                                 </a>
                             </div>
                         </div>
@@ -57,11 +51,10 @@
                 <!-- /Actions -->
             </div>
 
-            <p class="text-sm text-secondary-foreground" th:text="${project.description}">
+            <p class="text-sm text-secondary-foreground" th:text="${p.project().description}">
             </p>
 
-            <span class="text-sm text-foreground"
-                  th:text="${#dates.format(project.createdAt, 'dd MMM yyyy, HH:mm')}"></span>
+            <span class="text-sm text-foreground" th:text="${p.description()}"></span>
         </div>
 
         <!-- Add new role card (static link) -->

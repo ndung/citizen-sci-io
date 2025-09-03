@@ -4,7 +4,7 @@
 
 <body>
 <div class="kt-container-fluid">
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-5 lg:gap-7.5">
+    <div class="grid lg:grid-cols-1 gap-5 lg:gap-7.5 items-stretch">
 
         <div class="col-span-2">
             <div class="kt-card">
@@ -21,10 +21,11 @@
                         <table id="dataTable" class="display table w-full min-w-[1000px]">
                             <thead>
                             <tr>
-                                <th>No.</th>
-                                <th>Created At</th>
-                                <th>Creator</th>
-                                <th>Project</th>
+                                <th>ID</th>
+                                <th>Uploaded At</th>
+                                <th>Contributor</th>
+                                <th>Project Name</th>
+                                <th>Status</th>
                                 <th>Actions</th>
                                 <th>Verificator</th>
                                 <th>Verification Time</th>
@@ -33,15 +34,22 @@
                             <tbody>
                             <!-- SSR fallback if JS disabled -->
                             <tr th:each="d : ${data}">
-                                <td style="width:5%">Example</td>
+                                <td style="width:5%" th:text="${d.id}"></td>
                                 <td style="width:15%"><span th:text="${#dates.format(d.createdAt, 'dd MMM yyyy, HH:mm')}"></span></td>
-                                <td style="width:15%">d.user.fullName</td>
-                                <td style="width:15%">d.project.name</td>
-                                <td style="width:20%">
-                                    <a th:href="@{|/data/${d.id}|}"
+                                <td style="width:15%" th:text="${d.user != null ? d.user.fullName : ''}"></td>
+                                <td style="width:10%" th:text="${d.project != null ? d.project.name : ''}"></td>
+                                <td style="width:15%">
+                                    <span th:if="${d.status == 0}"
+                                                            class="kt-badge kt-badge-sm kt-badge-outline kt-badge-warning">Pending for verification</span>
+                                    <span th:if="${d.status == 1}"
+                                          class="kt-badge kt-badge-sm kt-badge-outline kt-badge-success">Approved</span>
+                                    <span th:if="${d.status == 2}"
+                                          class="kt-badge kt-badge-sm kt-badge-outline kt-badge-destructive">Rejected</span></td>
+                                <td style="width:10%">
+                                    <a th:href="@{|/record/${d.id}|}"
                                        class="kt-btn kt-btn-light">Detail</a>
                                 </td>
-                                <td style="width:15%">d.verificator.fullName</td>
+                                <td style="width:15%" th:text="${d.verificator != null ? d.verificator.fullName : ''}"></td>
                                 <td style="width:15%"><span th:text="${#dates.format(d.verifiedAt, 'dd MMM yyyy, HH:mm')}"></span></td>
                             </tr>
                             </tbody>
@@ -53,7 +61,7 @@
                     <script th:src="@{https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js}"></script>
                     <script>
                         $(function () {
-                            $('#projectsTable').DataTable({
+                            $('#dataTable').DataTable({
                                 scrollX: true,        // enable horizontal scrolling
                                 autoWidth: false,     // keep your widths; don’t auto-expand
                                 columnDefs: [

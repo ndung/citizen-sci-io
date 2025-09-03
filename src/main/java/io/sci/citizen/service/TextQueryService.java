@@ -101,21 +101,22 @@ public class TextQueryService extends BaseService {
             q.setSection(null);
 
         TextQuery textQuery = qRepo.save(q);
-
-        for (QueryOptionRequest optionRequest : req.getOptions()){
-            QueryOption p = new QueryOption();
-            if (optionRequest.getSequence()!=null) {
-                if (optionRequest.getId() != null) {
-                    Optional<QueryOption> optional = oRepo.findById(optionRequest.getId());
-                    if (optional.isPresent()) {
-                        p = optional.get();
+        if (req.getType()==1||req.getType()==2||req.getType()==4){
+            for (QueryOptionRequest optionRequest : req.getOptions()) {
+                QueryOption p = new QueryOption();
+                if (optionRequest.getSequence() != null) {
+                    if (optionRequest.getId() != null) {
+                        Optional<QueryOption> optional = oRepo.findById(optionRequest.getId());
+                        if (optional.isPresent()) {
+                            p = optional.get();
+                        }
                     }
+                    p.setSequence(optionRequest.getSequence());
+                    p.setDescription(optionRequest.getDescription());
+                    p.setQuestion(textQuery);
+                    p.setEnabled(optionRequest.isEnabled());
+                    oRepo.save(p);
                 }
-                p.setSequence(optionRequest.getSequence());
-                p.setDescription(optionRequest.getDescription());
-                p.setQuestion(textQuery);
-                p.setEnabled(optionRequest.isEnabled());
-                oRepo.save(p);
             }
         }
         /**q.setOptions(new ArrayList<>());

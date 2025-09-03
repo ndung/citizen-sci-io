@@ -91,7 +91,7 @@ public class SecurityConfig {
     public SecurityFilterChain webChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(registry -> registry
-                .requestMatchers("/login", "/logout", "/assets/**", "/webjars/**", "/file/**", "/files/**").permitAll()
+                .requestMatchers("/login", "/logout", "/assets/**", "/webjars/**", "/file/**", "/files/**", "/error", "/favicon.ico").permitAll()
                     .requestMatchers("/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
             )

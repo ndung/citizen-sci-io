@@ -7,7 +7,6 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
@@ -41,7 +40,7 @@ public class Data implements Serializable {
     private Date finishDate;
 
     @Column(nullable = false, updatable = false)
-    private Instant createdAt = Instant.now();
+    private Date createdAt = new Date();
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at")
@@ -123,11 +122,11 @@ public class Data implements Serializable {
 
     public void setUser(User userId) { this.user = userId; }
 
-    public Instant getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Instant createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -177,5 +176,14 @@ public class Data implements Serializable {
 
     public void setVerifiedAt(Date verifiedAt) {
         this.verifiedAt = verifiedAt;
+    }
+
+    @Transient
+    public String getDetails(){
+        StringBuilder sb = new StringBuilder();
+        for (QueryReply reply : surveyResponses) {
+            sb.append(reply.getQuestion().getAttribute()).append("=").append(reply.getResponse()).append("; ");
+        }
+        return sb.toString();
     }
 }

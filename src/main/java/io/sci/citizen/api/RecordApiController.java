@@ -3,6 +3,7 @@ package io.sci.citizen.api;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import io.sci.citizen.api.dto.RecordData;
 import io.sci.citizen.config.FileStorage;
 import io.sci.citizen.model.*;
 import io.sci.citizen.model.repository.*;
@@ -11,13 +12,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @RestController
 @RequestMapping("/api/record")
-public class RecordController extends BaseApiController {
+public class RecordApiController extends BaseApiController {
 
     @Autowired
     private FileStorage fileStorage;
@@ -36,9 +35,12 @@ public class RecordController extends BaseApiController {
 
     private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").enableComplexMapKeySerialization().create();
 
-    @RequestMapping(value = "/upload", method = RequestMethod.POST)
+    @Autowired
+    private ProjectRepository projectRepository;
+
+    @PostMapping(path = {"/upload", "/upload/"})
     public ResponseEntity<Response> upload(@RequestHeader("Authorization") String token,
-                                           @RequestParam("model") String model,
+                                           @RequestParam("model") String record,
                                            @RequestParam("images") MultipartFile[] images,
                                            @RequestParam("results") String results) {
         try {
@@ -46,7 +48,17 @@ public class RecordController extends BaseApiController {
                 return FORBIDDEN;
             }
             String userId = getUserId(token);
-            Data data = gson.fromJson(model, Data.class);
+            RecordData model = gson.fromJson(record, RecordData.class);
+            Data data = new Data();
+            data.setCreatedAt(new Date());
+            data.setLatitude(model.latitude());
+            data.setLongitude(model.longitude());
+            data.setAccuracy(model.accuracy());
+            Optional<Project> project = projectRepository.findById(model.projectId());
+            project.ifPresent(data::setProject);
+            data.setUuid(model.uuid());
+            data.setStartDate(model.startDate());
+            data.setFinishDate(model.finishDate());
             Optional<User> user = userRepository.findById(Long.valueOf(userId));
             user.ifPresent(data::setUser);
             data = dataRepository.save(data);
@@ -58,11 +70,9 @@ public class RecordController extends BaseApiController {
                             .filter(n -> n.contains("."))
                             .map(n -> n.substring(n.lastIndexOf('.')))
                             .orElse("");
-                    String key = DateTimeFormatter.ofPattern("yyyy/MM/dd").format(LocalDate.now())
-                            + "/" + UUID.randomUUID() + ext;
-
-                    String path = fileStorage.store(key, image).key();
                     String sectionId = name.substring(0,name.indexOf("-"));
+                    String key = data.getProject().getId()+"_"+sectionId+"_"+data.getId()+"_"+UUID.randomUUID() + ext;
+                    String path = fileStorage.store(key, image).key();
                     Optional<Section> section = sectionRepository.findById(Long.parseLong(sectionId));
                     Image recordImage = new Image();
                     recordImage.setUuid(path);

@@ -44,7 +44,7 @@
                     </div>
 
                     <div class="flex items-baseline gap-2.5">
-                        <label class="kt-form-label w-40">Type</label>
+                        <label class="kt-form-label w-40">Value Type</label>
                         <select class="kt-input" id="type" th:field="*{type}">
                             <option th:each="entry : ${typeOptions}"
                                     th:value="${entry.key}"
@@ -93,7 +93,7 @@
                     <div>
                         <div class="flex flex-wrap items-center gap-5 justify-between">
                             <div class="flex items-center gap-2.5">
-                                <h3 class="kt-card-title">Options</h3>
+                                <h3 class="kt-card-title">Options (only applicable for 'radio buttons' and 'check boxes')</h3>
                             </div>
                             <div class="flex gap-2.5">
                                 <a id="addRow" class="kt-btn kt-btn-primary inline-flex items-center gap-2">
@@ -163,7 +163,7 @@
                                 <th>Sequence</th>
                                 <th>Attribute</th>
                                 <th>Question</th>
-                                <th>Type</th>
+                                <th>Value Type</th>
                                 <th>Enabled</th>
                                 <th>Required</th>
                                 <th>Options</th>
@@ -176,9 +176,26 @@
                                 <td style="width:5%" th:text="${q.sequence}">1</td>
                                 <td style="width:10%" th:text="${q.attribute}">attr</td>
                                 <td style="width:20%" th:text="${q.question}">Question?</td>
-                                <td style="width:10%" th:text="${q.type}">1</td>
-                                <td style="width:5%" th:text="${q.enabled}">true</td>
-                                <td style="width:5%" th:text="${q.required}">true</td>
+                                <td style="width:10%" th:text="${q.type == 2 ? 'Radio buttons' :
+                                (q.type == 3 ? 'String text field' :
+                                (q.type == 4 ? 'Check boxes' :
+                                (q.type == 5 ? 'Date' :
+                                (q.type == 6 ? 'Free options input' :
+                                (q.type == 7 ? 'Free integer input' :
+                                (q.type == 8 ? 'Free decimal input' :
+                                q.type))))))}">">1</td>
+                                <td style="width:5%">
+                                    <span th:if="${q.enabled == false}"
+                                          class="kt-badge kt-badge-sm kt-badge-outline kt-badge-destructive">No</span>
+                                    <span th:if="${q.enabled == true}"
+                                          class="kt-badge kt-badge-sm kt-badge-outline kt-badge-success">Yes</span>
+                                </td>
+                                <td style="width:5%">
+                                    <span th:if="${q.required == false}"
+                                          class="kt-badge kt-badge-sm kt-badge-outline kt-badge-destructive">No</span>
+                                    <span th:if="${q.required == true}"
+                                          class="kt-badge kt-badge-sm kt-badge-outline kt-badge-success">Yes</span>
+                                </td>
                                 <td style="width:25%" th:text="${q.options}">true</td>
                                 <td style="width:10%" th:text="${q.section != null ? q.section.name : '-'}">Section</td>
                                 <td style="width:10%" class="flex gap-2">

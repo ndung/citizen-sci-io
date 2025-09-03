@@ -59,4 +59,9 @@ public class Image {
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
+
+    @Transient
+    public String getUrl(){
+        return "https://citizen-sci-io-c296af702ec9.herokuapp.com/files/"+uuid;
+    }
 }

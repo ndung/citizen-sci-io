@@ -17,14 +17,24 @@ public interface DataRepository extends JpaRepository<Data, Long> {
     List<Data> findByUserIdAndDate(@Param("userId") long userId, @Param("from") Date from, @Param("to") Date to);
 
     @Query(
-            value = "select distinct(user.id) from data",
+            value = "select distinct(user_id) from data",
             nativeQuery = true)
     List<BigInteger> getUniqueUserIds();
 
     @Query(
-            value = "select count(*) from data where user.id = :userId",
+            value = "select count(distinct(user_id)) from data where project_id = :projectId",
             nativeQuery = true)
-    Integer getRecordCount(@Param("userId") long userId);
+    Integer getUserCountByProjectId(@Param("projectId") long projectId);
+
+    @Query(
+            value = "select count(*) from data where user_id = :userId",
+            nativeQuery = true)
+    Integer getRecordCountByUserId(@Param("userId") long userId);
+
+    @Query(
+            value = "select count(*) from data where project_id = :projectId",
+            nativeQuery = true)
+    Integer getRecordCountByProjectId(@Param("projectId") long projectId);
 
     Data findDataByUser_IdAndUuidOrderByCreatedAtDesc(Long userId, String uuid);
 

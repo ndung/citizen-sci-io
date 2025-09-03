@@ -1,0 +1,212 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: layout (~{::body},'index')}">
+
+<body>
+<div th:object="${record}" class="kt-container-fluid">
+    <div class="grid gap-5 lg:gap-7.5">
+        <!-- begin: grid -->
+        <div class="grid lg:grid-cols-3 gap-y-5 lg:gap-7.5 items-stretch">
+            <div class="lg:col-span-1">
+                <div class="grid grid-cols-1 gap-5 lg:gap-7.5 h-full items-stretch">
+                    <div class="kt-card min-w-full">
+                        <div class="kt-card-header">
+                            <h3 class="kt-card-title">
+                                Record
+                            </h3>
+                            <!-- Buttons -->
+                            <div class="flex justify-end gap-2">
+                                <form th:if="${record.status == 0 or record.status == 2}" th:action="@{|/record/${record.id}/approve|}" method="post"
+                                      onsubmit="return confirm('Approve this data?');">
+                                    <input type="hidden" th:if="${_csrf != null}"
+                                           th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <button class="kt-btn kt-btn-danger" type="submit">Approve</button>
+                                </form>
+                                <form th:if="${record.status == 0 or record.status == 1}" th:action="@{|/record/${record.id}/reject|}" method="post"
+                                      onsubmit="return confirm('Reject this data?');">
+                                    <input type="hidden" th:if="${_csrf != null}"
+                                           th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <button class="kt-btn kt-btn-danger" type="submit">Reject</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="kt-card-table kt-scrollable-x-auto pb-3">
+                            <table class="kt-table align-middle text-sm">
+                                <tr>
+                                    <td class="py-2 text-secondary-foreground font-normal">
+                                        ID
+                                    </td>
+                                    <td class="py-2 text-secondary-foreground font-normal">
+                                        <span th:text="${record.id}"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 text-secondary-foreground font-normal">
+                                        Contributor
+                                    </td>
+                                    <td class="py-2 text-secondary-foreground font-normal">
+                                        <span th:text="${record.user.fullName}"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 text-secondary-foreground font-normal">
+                                        Uploaded At
+                                    </td>
+                                    <td class="py-2 text-secondary-foreground font-normal">
+                                        <span th:text="${#dates.format(record.createdAt, 'dd MMM yyyy, HH:mm')}"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 text-secondary-foreground font-normal">
+                                        Status
+                                    </td>
+                                    <td class="py-2 text-secondary-foreground font-normal">
+                                        <span th:if="${record.status == 0}"
+                                              class="kt-badge kt-badge-sm kt-badge-outline kt-badge-warning">Pending for verification</span>
+                                        <span th:if="${record.status == 1}"
+                                              class="kt-badge kt-badge-sm kt-badge-outline kt-badge-success">Approved</span>
+                                        <span th:if="${record.status == 2}"
+                                              class="kt-badge kt-badge-sm kt-badge-outline kt-badge-destructive">Rejected</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 text-secondary-foreground font-normal">
+                                        Details
+                                    </td>
+                                    <td class="py-2 text-secondary-foreground font-normal">
+                                        <span th:text="${record.details}"></span>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="lg:col-span-1">
+                <div class="grid grid-cols-1 gap-5 lg:gap-7.5 h-full items-stretch">
+                    <div class="kt-card px-5 lg:px-7.5 h-full bg-[length:85%] [background-position:7.5rem_-3.5rem] rtl:[background-position:-3rem_-3.5rem] bg-no-repeat channel-stats-bg">
+                        <div class="flex flex-col gap-4 pt-6">
+                            <div id="map" style="width: 540px;height:320px">
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end: grid -->
+        <!-- begin: grid -->
+
+        <div class="grid grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-7.5">
+            <div class="col-span-2">
+                <div class="kt-card kt-card-grid h-full min-w-full">
+                    <div class="kt-card-header">
+                        <h3 class="kt-card-title">
+                            Images
+                        </h3>
+                    </div>
+                    <div class="kt-card-table">
+                        <div class="grid" data-kt-datatable="true" data-kt-datatable-page-size="5" id="images_datatable">
+                            <div class="kt-scrollable-x-auto">
+                                <table class="kt-table kt-table-border table-fixed" data-kt-datatable-table="true" id="kt_datatable_1">
+                                    <thead>
+                                    <tr>
+                                        <th class="w-[50px]">
+                                            <span class="kt-table-col"><span class="kt-table-col-label">ID</span> </span>
+                                        </th>
+                                        <th class="w-[80px]">
+                                            <span class="kt-table-col"><span class="kt-table-col-label">Image</span></span>
+                                        </th>
+                                        <th class="w-[125px]">
+                                            <span class="kt-table-col"><span class="kt-table-col-label">Created At</span></span>
+                                        </th>
+                                        <th class="w-[100px]">
+                                            <span class="kt-table-col"><span class="kt-table-col-label">Status</span></span>
+                                        </th>
+                                        <th class="w-[100px]">
+                                            <span class="kt-table-col"><span class="kt-table-col-label">Action</span></span>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody th:each="image : ${record.images}">
+                                    <tr>
+                                        <td>
+                                            <div class="flex flex-col gap-2">
+                                                <span th:text="${image.id}"></span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="relative size-[44px] shrink-0">
+                                                <img alt="" class="size-12" th:src="${image.url}"/>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span th:text="${#dates.format(image.createdAt, 'dd MMM yyyy, HH:mm')}"></span>
+                                        </td>
+                                        <td>
+                                            <span th:if="${image.status == 0}"
+                                                  class="kt-badge kt-badge-sm kt-badge-outline kt-badge-warning">Pending for verification</span>
+                                            <span th:if="${image.status == 1}"
+                                                  class="kt-badge kt-badge-sm kt-badge-outline kt-badge-success">Approved</span>
+                                            <span th:if="${image.status == 2}"
+                                                  class="kt-badge kt-badge-sm kt-badge-outline kt-badge-destructive">Rejected</span>
+                                        </td>
+                                        <td class="flex gap-2">
+                                            <form th:if="${image.status == 0 or image.status == 2}" th:action="@{|/record/${record.id}/${image.id}/approve|}" method="post"
+                                                  onsubmit="return confirm('Approve this image?');">
+                                                <input type="hidden" th:if="${_csrf != null}"
+                                                       th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                                <button class="kt-btn kt-btn-danger" type="submit">Approve</button>
+                                            </form>
+                                            <form th:if="${image.status == 0 or image.status == 1}" th:action="@{|/record/${record.id}/${image.id}/reject|}" method="post"
+                                                  onsubmit="return confirm('Reject this image?');">
+                                                <input type="hidden" th:if="${_csrf != null}"
+                                                       th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                                <button class="kt-btn kt-btn-danger" type="submit">Reject</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- end: grid -->
+    </div>
+    <script th:inline="javascript">
+        async function initMap() {
+            const lat = /*[[*{latitude}]]*/ null;
+            const lng = /*[[*{longitude}]]*/ null;
+
+            // Modular loader (recommended)
+            const { Map } = await google.maps.importLibrary("maps");
+            const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+
+            const center = (lat != null && lng != null) ? { lat, lng } : { lat: -6.2, lng: 106.8 }; // fallback
+
+            const map = new Map(document.getElementById("map"), {
+                zoom: 12,
+                mapId: "296547605a2c0723bd8e22b4",
+                center,
+                disableDefaultUI: false
+            });
+
+            if (lat != null && lng != null) {
+                new AdvancedMarkerElement({ map, position: center });
+            }
+        }
+    </script>
+
+    <!-- recommended loader: use loading=async; drop async/defer attrs and signed_in -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0zqzSNYyBrJhkuRA0NXbmepueG_TYGpE&v=weekly&loading=async&callback=initMap"></script></div>
+<!-- End of Container -->
+
+</body>
+</html>

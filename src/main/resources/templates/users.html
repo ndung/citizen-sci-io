@@ -107,7 +107,10 @@
                                 <td th:text="${u.fullName}">Alice Doe</td>
                                 <td th:text="${u.email}">alice@example.com</td>
                                 <td>
-                                    <span th:text="${u.enabled} ? 'Yes' : 'No'">Yes</span>
+                                    <span th:if="${u.enabled == false}"
+                                          class="kt-badge kt-badge-sm kt-badge-outline kt-badge-destructive">No</span>
+                                    <span th:if="${u.enabled == true}"
+                                          class="kt-badge kt-badge-sm kt-badge-outline kt-badge-success">Yes</span>
                                 </td>
                                 <td th:text="${#strings.arrayJoin(u.roles.toArray(), ', ')}">ADMIN, USER</td>
                                 <td>
