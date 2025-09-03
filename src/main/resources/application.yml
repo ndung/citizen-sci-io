@@ -21,7 +21,7 @@ server:
   error:
     whitelabel:
       enabled: ${SERVER_ERROR_WHITELABEL_ENABLED:true}
-  port: ${SERVER_PORT:80}
+  port: ${PORT:80}
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
