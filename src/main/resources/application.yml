@@ -14,9 +14,9 @@ app:
 jwt:
   expiration: ${JWT_EXPIRATION:-1}
   secret: ${JWT_SECRET:}
-logging:
-  level:
-    root: ${LOGGING_LEVEL_ROOT:DEBUG}
+#logging:
+#  level:
+#    root: ${LOGGING_LEVEL_ROOT:DEBUG}
 server:
   error:
     whitelabel:
