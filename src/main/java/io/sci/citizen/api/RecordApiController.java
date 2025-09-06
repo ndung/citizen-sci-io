@@ -135,7 +135,7 @@ public class RecordApiController extends BaseApiController {
             String userId = getUserId(token);
             if (type.equals("2")){
                 return getHttpStatus(new Response(dataRepository.findAll()));
-            }else if (type.equals("1")) {
+            }else if (type.equals("0")) {
                 return getHttpStatus(new Response(dataRepository.findDataByUser_IdAndStatusOrderByCreatedAtDesc(Long.parseLong(userId),1)));
             }else {
                 return getHttpStatus(new Response(dataRepository.findDataByUser_IdOrderByCreatedAtDesc(Long.parseLong(userId))));

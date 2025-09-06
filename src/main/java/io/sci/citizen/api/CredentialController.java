@@ -4,7 +4,6 @@ import io.sci.citizen.api.dto.SignInRequest;
 import io.sci.citizen.model.User;
 import io.sci.citizen.model.dto.CreatePasswordRequest;
 import io.sci.citizen.api.dto.LoginDetails;
-import io.sci.citizen.model.dto.ChangePasswordRequest;
 import io.sci.citizen.model.dto.UserRequest;
 import io.sci.citizen.service.ProjectService;
 import io.sci.citizen.service.UserService;
@@ -33,7 +32,6 @@ public class CredentialController extends BaseApiController {
 
     @RequestMapping(value = "/check-credential-id", method = RequestMethod.POST)
     public ResponseEntity<Response> checkUserName(@RequestBody String username) {
-        System.out.printf("username: %s\n", username);
         int result = 0;
         User user = userService.getUser(username);
         if (user==null) {
@@ -84,12 +82,16 @@ public class CredentialController extends BaseApiController {
     @RequestMapping(value = "/sign-up", method = RequestMethod.POST)
     public ResponseEntity<Response> signUp(@RequestBody UserRequest request) {
         try {
+            int result = 0;
             User user = userService.signUp(request);
-            LoginDetails details = createLoginDetails(user);
-            String token = createToken(user);
-            HttpHeaders responseHeaders = new HttpHeaders();
-            responseHeaders.set("Token", token);
-            return getHttpStatus(new Response(details), responseHeaders);
+            if (user==null) {
+                result = -1;
+            }else {
+                if (user.isEnabled()){
+                    result = 1;
+                }
+            }
+            return getHttpStatus(new Response(result));
         } catch (Exception e) {
             e.printStackTrace();
             return getHttpStatus(new Response(e.getMessage()));
@@ -98,42 +100,6 @@ public class CredentialController extends BaseApiController {
 
     private LoginDetails createLoginDetails(User user){
         return new LoginDetails(user, projectService.findAll(user.getId()));
-    }
-
-    @RequestMapping(value = "/change-pwd", method = RequestMethod.POST)
-    public ResponseEntity<Response> changePassword(@RequestHeader("Authorization") String token,
-                                                   @RequestBody ChangePasswordRequest request) {
-        try {
-            if (!authorize(token)) {
-                return FORBIDDEN;
-            }
-
-            String userId = getUserId(token);
-            User user = userService.getById(Long.parseLong(userId));
-            userService.changePassword(user, request.getCurrentPassword(), request.getNewPassword());
-            return getHttpStatus(new Response(user));
-
-        } catch (Exception e) {
-            return getHttpStatus(new Response(e.getMessage()));
-        }
-    }
-
-    @RequestMapping(value = "/update-profile", method = RequestMethod.POST)
-    public ResponseEntity<Response> changeProfile(@RequestHeader("Authorization") String token,
-                                                  @RequestBody UserRequest request) {
-        try {
-            if (!authorize(token)) {
-                return FORBIDDEN;
-            }
-
-            String userId = getUserId(token);
-            User user = userService.getById(Long.parseLong(userId));
-            user = userService.updateProfile(user, request);
-            return getHttpStatus(new Response(user));
-
-        } catch (Exception e) {
-            return getHttpStatus(new Response(e.getMessage()));
-        }
     }
 
 }

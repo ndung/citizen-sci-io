@@ -1,6 +1,5 @@
 package io.sci.citizen.service;
 
-import io.sci.citizen.api.component.PasswordUtil;
 import io.sci.citizen.model.User;
 import io.sci.citizen.model.dto.CreatePasswordRequest;
 import io.sci.citizen.model.dto.UserRequest;
@@ -61,7 +60,7 @@ public class UserService extends BaseService {
         u.setUsername(req.getUsername().trim());
         u.setFullName(req.getFullName().trim());
         u.setEmail(req.getEmail().trim());
-        u.setEnabled(true);
+        u.setEnabled(false);
         u.setRoles(Set.of("USER"));
         u.setPasswordHash(encoder.encode(req.getPassword()));
         return userRepo.save(u);
@@ -123,9 +122,9 @@ public class UserService extends BaseService {
         //if (!isPasswordValid(request.getPassword(), true, true, 6, 20)) {
         //    throw new Exception("Kata sandi tidak valid");
         //}
-        User  user = opt.get();
+        User user = opt.get();
         user.setRoles(Set.of("USER"));
-        user.setPasswordHash(PasswordUtil.md5Hash(request.getPassword()));
+        user.setPasswordHash(encoder.encode(request.getPassword()));
         user.setEnabled(true);
         return userRepo.save(user);
     }
