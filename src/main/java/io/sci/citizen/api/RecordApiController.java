@@ -3,6 +3,7 @@ package io.sci.citizen.api;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import io.sci.citizen.api.dto.DataRequest;
 import io.sci.citizen.api.dto.RecordData;
 import io.sci.citizen.config.FileStorage;
 import io.sci.citizen.model.*;
@@ -49,8 +50,15 @@ public class RecordApiController extends BaseApiController {
             }
             String userId = getUserId(token);
             RecordData model = gson.fromJson(record, RecordData.class);
+            List<Data> list = dataRepository.findByUser_IdAndUuidOrderByCreatedAtDesc(Long.parseLong(userId), model.uuid());
             Data data = new Data();
-            data.setCreatedAt(new Date());
+            if (list!=null && !list.isEmpty()){
+                data = list.get(0);
+                data.setUpdatedAt(new Date());
+                imageRepository.deleteImagesByData_Id(data.getId());
+            }else{
+                data.setCreatedAt(new Date());
+            }
             data.setLatitude(model.latitude());
             data.setLongitude(model.longitude());
             data.setAccuracy(model.accuracy());
@@ -62,7 +70,7 @@ public class RecordApiController extends BaseApiController {
             Optional<User> user = userRepository.findById(Long.valueOf(userId));
             user.ifPresent(data::setUser);
             data = dataRepository.save(data);
-            //imageRepository.deleteImagesByData_Id(data.getId());
+
             if (images != null) {
                 for (MultipartFile image : images) {
                     String name = image.getOriginalFilename();
@@ -125,20 +133,23 @@ public class RecordApiController extends BaseApiController {
         }
     }
 
-    @RequestMapping(value = "/list", method = RequestMethod.POST)
-    public ResponseEntity<Response> getList(@RequestHeader("Authorization") String token,
-                                            @RequestBody String type) {
+    @RequestMapping(value = "/list-by-project", method = RequestMethod.POST)
+    public ResponseEntity<Response> getListByProject(@RequestHeader("Authorization") String token,
+                                                     @RequestBody DataRequest request) {
         try {
             if (!authorize(token)) {
                 return FORBIDDEN;
             }
             String userId = getUserId(token);
-            if (type.equals("2")){
-                return getHttpStatus(new Response(dataRepository.findAll()));
-            }else if (type.equals("0")) {
-                return getHttpStatus(new Response(dataRepository.findDataByUser_IdAndStatusOrderByCreatedAtDesc(Long.parseLong(userId),1)));
+            if (request.type()==2){
+                return getHttpStatus(new Response(dataRepository.findByProject_IdOrderByCreatedAtDesc(
+                        request.projectId())));
+            }else if (request.type()==1) {
+                return getHttpStatus(new Response(dataRepository.findByProject_IdAndUser_IdAndStatusOrderByCreatedAtDesc(
+                        request.projectId(), Long.parseLong(userId),1)));
             }else {
-                return getHttpStatus(new Response(dataRepository.findDataByUser_IdOrderByCreatedAtDesc(Long.parseLong(userId))));
+                return getHttpStatus(new Response(dataRepository.findByProject_IdAndUser_IdOrderByCreatedAtDesc(
+                        request.projectId(), Long.parseLong(userId))));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -146,18 +157,39 @@ public class RecordApiController extends BaseApiController {
         }
     }
 
-    @RequestMapping(value = "/summary", method = RequestMethod.GET)
-    public ResponseEntity<Response> getSummary(@RequestHeader("Authorization") String token) {
+    @RequestMapping(value = "/list-by-user", method = RequestMethod.POST)
+    public ResponseEntity<Response> getListByUser(@RequestHeader("Authorization") String token,
+                                                  @RequestBody DataRequest request) {
         try {
             if (!authorize(token)) {
                 return FORBIDDEN;
             }
             String userId = getUserId(token);
-            List<Data> uploaded = dataRepository.findDataByUser_IdOrderByCreatedAtDesc(Long.parseLong(userId));
-            List<Data> verified = dataRepository.findDataByUser_IdAndStatusOrderByCreatedAtDesc(Long.parseLong(userId), 1);
-            List<Data> total = dataRepository.findAll();
-            SummaryResponse summary = new SummaryResponse(verified==null ? 0: verified.size(),
-                    uploaded==null ? 0: uploaded.size(), total.size());
+            if (request.type()==2){
+                return getHttpStatus(new Response(dataRepository.findAll()));
+            }else if (request.type()==1){
+                return getHttpStatus(new Response(dataRepository.findByUser_IdAndStatusOrderByCreatedAtDesc(Long.parseLong(userId),1)));
+            }else {
+                return getHttpStatus(new Response(dataRepository.findByUser_IdOrderByCreatedAtDesc(Long.parseLong(userId))));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return getHttpStatus(new Response(e.getMessage()));
+        }
+    }
+
+    @RequestMapping(value = "/project-summary", method = RequestMethod.GET)
+    public ResponseEntity<Response> getProjectSummary(@RequestHeader("Authorization") String token,
+                                                      @RequestBody DataRequest request) {
+        try {
+            if (!authorize(token)) {
+                return FORBIDDEN;
+            }
+            String userId = getUserId(token);
+            int uploaded = dataRepository.getRecordCountByProjectIdAndUserId(request.projectId(), Long.parseLong(userId));
+            int verified = dataRepository.getRecordCountByProjectIdAndUserIdAndStatus(request.projectId(), Long.parseLong(userId), 1);
+            int total = dataRepository.getRecordCountByProjectId(request.projectId());
+            SummaryResponse summary = new SummaryResponse(uploaded, verified, total);
             return getHttpStatus(new Response(summary));
         } catch (Exception e) {
             e.printStackTrace();
@@ -165,6 +197,23 @@ public class RecordApiController extends BaseApiController {
         }
     }
 
+    @RequestMapping(value = "/user-summary", method = RequestMethod.GET)
+    public ResponseEntity<Response> getUserSummary(@RequestHeader("Authorization") String token) {
+        try {
+            if (!authorize(token)) {
+                return FORBIDDEN;
+            }
+            String userId = getUserId(token);
+            int uploaded = dataRepository.getRecordCountByUserId(Long.parseLong(userId));
+            int verified = dataRepository.getRecordCountByUserIdAndStatus(Long.parseLong(userId), 1);
+            int total = dataRepository.getRecordCount();
+            SummaryResponse summary = new SummaryResponse(uploaded, verified, total);
+            return getHttpStatus(new Response(summary));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return getHttpStatus(new Response(e.getMessage()));
+        }
+    }
 
     record SummaryResponse (int uploaded, int verified, int total){}
 }

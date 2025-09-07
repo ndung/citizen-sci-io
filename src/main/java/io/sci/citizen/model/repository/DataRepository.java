@@ -27,20 +27,49 @@ public interface DataRepository extends JpaRepository<Data, Long> {
     Integer getUserCountByProjectId(@Param("projectId") long projectId);
 
     @Query(
+            value = "select count(*) from data",
+            nativeQuery = true)
+    Integer getRecordCount();
+
+    @Query(
             value = "select count(*) from data where user_id = :userId",
             nativeQuery = true)
     Integer getRecordCountByUserId(@Param("userId") long userId);
+
+    @Query(
+            value = "select count(*) from data where user_id = :userId and status = :status",
+            nativeQuery = true)
+    Integer getRecordCountByUserIdAndStatus(@Param("userId") long userId, @Param("status") int status);
 
     @Query(
             value = "select count(*) from data where project_id = :projectId",
             nativeQuery = true)
     Integer getRecordCountByProjectId(@Param("projectId") long projectId);
 
-    Data findDataByUser_IdAndUuidOrderByCreatedAtDesc(Long userId, String uuid);
+    @Query(
+            value = "select count(*) from data where project_id = :projectId and user_id = :userId ",
+            nativeQuery = true)
+    Integer getRecordCountByProjectIdAndUserId(@Param("projectId") long projectId, @Param("userId") long userId);
 
-    List<Data> findDataByUser_IdOrderByCreatedAtDesc(Long userId);
+    @Query(
+            value = "select count(*) from data where project_id = :projectId and status = :status",
+            nativeQuery = true)
+    Integer getRecordCountByProjectIdAndStatus(@Param("projectId") long projectId, @Param("status") int status);
 
-    List<Data> findDataByUser_IdAndStatusOrderByCreatedAtDesc(Long userId, int status);
+    @Query(
+            value = "select count(*) from data where project_id = :projectId and user_id = :userId and status = :status",
+            nativeQuery = true)
+    Integer getRecordCountByProjectIdAndUserIdAndStatus(@Param("projectId") long projectId, @Param("userId") long userId, @Param("status") int status);
+
+    List<Data> findByUser_IdAndUuidOrderByCreatedAtDesc(Long userId, String uuid);
+
+    List<Data> findByUser_IdOrderByCreatedAtDesc(Long userId);
+
+    List<Data> findByUser_IdAndStatusOrderByCreatedAtDesc(Long userId, int status);
 
     List<Data> findByProject_IdOrderByCreatedAtDesc(Long projectId);
+
+    List<Data> findByProject_IdAndUser_IdOrderByCreatedAtDesc(Long projectId, Long userId);
+
+    List<Data> findByProject_IdAndUser_IdAndStatusOrderByCreatedAtDesc(Long projectId, Long userId, int status);
 }
