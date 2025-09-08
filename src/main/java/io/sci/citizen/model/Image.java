@@ -6,6 +6,8 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import java.time.Instant;
+import java.util.Objects;
+
 @Entity
 @Table(name="image")
 public class Image {
@@ -16,13 +18,15 @@ public class Image {
 
     private String uuid;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    private String originalFileName;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "data_id")
     @NotFound(action = NotFoundAction.IGNORE)
     @JsonIgnore
     private Data data;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "section_id")
     @NotFound(action = NotFoundAction.IGNORE)
     private Section section;
@@ -35,6 +39,10 @@ public class Image {
     public Long getId() { return id; }
 
     public void setId(Long id) { this.id = id; }
+
+    public String getOriginalFileName() { return originalFileName; }
+
+    public void setOriginalFileName(String originalFileName) { this.originalFileName = originalFileName; }
 
     public String getUuid() { return uuid; }
 
@@ -63,5 +71,26 @@ public class Image {
     @Transient
     public String getUrl(){
         return "https://citizen-sci-io-c296af702ec9.herokuapp.com/files/"+uuid;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Image image = (Image) o;
+        return Objects.equals(id, image.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Image{" +
+                "id=" + id +
+                ", data.Uuid='" + data.getUuid() + '\'' +
+                ", originalFileName='" + originalFileName + '\'' +
+                '}';
     }
 }

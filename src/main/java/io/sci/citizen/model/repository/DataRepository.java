@@ -1,6 +1,7 @@
 package io.sci.citizen.model.repository;
 
 import io.sci.citizen.model.Data;
+import io.sci.citizen.model.User;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -72,4 +73,6 @@ public interface DataRepository extends JpaRepository<Data, Long> {
     List<Data> findByProject_IdAndUser_IdOrderByCreatedAtDesc(Long projectId, Long userId);
 
     List<Data> findByProject_IdAndUser_IdAndStatusOrderByCreatedAtDesc(Long projectId, Long userId, int status);
+
+    long user(User user);
 }

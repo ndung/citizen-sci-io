@@ -10,6 +10,7 @@ import org.hibernate.annotations.NotFoundAction;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "project")
@@ -105,5 +106,17 @@ public class Project {
     @Transient
     public String getIconUrl(){
         return "https://citizen-sci-io-c296af702ec9.herokuapp.com/files/"+icon;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Project project = (Project) o;
+        return Objects.equals(id, project.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

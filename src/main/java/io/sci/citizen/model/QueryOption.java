@@ -6,6 +6,7 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Table(name="survey_parameter")
@@ -19,7 +20,7 @@ public class QueryOption implements Serializable {
 
     private String description;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "question_id")
     @NotFound(action = NotFoundAction.IGNORE)
     @JsonIgnore
@@ -64,5 +65,17 @@ public class QueryOption implements Serializable {
     @Override
     public String toString() {
         return sequence + "=" + description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        QueryOption that = (QueryOption) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

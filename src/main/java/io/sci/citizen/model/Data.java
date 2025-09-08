@@ -9,6 +9,7 @@ import org.hibernate.annotations.NotFoundAction;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name="data")
@@ -53,7 +54,6 @@ public class Data implements Serializable {
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy="data", cascade = {CascadeType.ALL})
     private List<QueryReply> surveyResponses;
-
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "verificator_id")
@@ -185,5 +185,17 @@ public class Data implements Serializable {
             sb.append(reply.getQuestion().getAttribute()).append("=").append(reply.getResponse()).append("; ");
         }
         return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Data data = (Data) o;
+        return Objects.equals(id, data.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

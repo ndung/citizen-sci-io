@@ -9,6 +9,7 @@ import org.hibernate.annotations.NotFoundAction;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name="survey_question")
@@ -29,7 +30,7 @@ public class TextQuery implements Serializable {
     private Integer sequence;
 
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "section_id")
     @NotFound(action = NotFoundAction.IGNORE)
     private Section section;
@@ -99,4 +100,16 @@ public class TextQuery implements Serializable {
     public Section getSection() { return section; }
 
     public void setSection(Section section) { this.section = section; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        TextQuery textQuery = (TextQuery) o;
+        return Objects.equals(id, textQuery.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }

@@ -7,6 +7,7 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name="survey_response")
@@ -16,17 +17,21 @@ public class QueryReply {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @ManyToOne(cascade = CascadeType.ALL)
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "data_id")
     @NotFound(action = NotFoundAction.IGNORE)
     @JsonIgnore
     private Data data;
-    @ManyToOne(cascade = CascadeType.ALL)
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "question_id")
     @NotFound(action = NotFoundAction.IGNORE)
     private TextQuery question;
+
     @Column(name = "response")
     private String response;
+
     @Column(name = "date_time")
     private Date responseDateTime;
 
@@ -64,5 +69,17 @@ public class QueryReply {
 
     public void setResponseDateTime(Date responseDateTime) {
         this.responseDateTime = responseDateTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        QueryReply that = (QueryReply) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }
