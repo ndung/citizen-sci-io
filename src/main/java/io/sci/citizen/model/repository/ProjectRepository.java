@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 
-    List<Project> findProjectsByCreator_IdOrderByCreatedAtDesc(Long userId);
+    List<Project> findProjectsByCreator_Id(Long userId);
 
     List<Project> findProjectsByPubliclyAvailable(boolean publiclyAvailable);
 }

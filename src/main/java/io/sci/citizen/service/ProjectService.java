@@ -30,7 +30,7 @@ public class ProjectService extends BaseService{
         }else{
             User user = getUser();
             if (user!=null){
-                return projectRepo.findProjectsByCreator_IdOrderByCreatedAtDesc(user.getId());
+                return projectRepo.findProjectsByCreator_Id(user.getId());
             }
         }
         return null;
@@ -39,7 +39,7 @@ public class ProjectService extends BaseService{
     @Transactional(readOnly = true)
     public Map<Long,Project> findAll(Long userid) {
         List<Project> publicProjects = projectRepo.findProjectsByPubliclyAvailable(true);
-        List<Project> privateProjects = projectRepo.findProjectsByCreator_IdOrderByCreatedAtDesc(userid);
+        List<Project> privateProjects = projectRepo.findProjectsByCreator_Id(userid);
         Map<Long,Project> projects = new HashMap<>();
         for (Project project : publicProjects){
             projects.put(project.getId(), project);

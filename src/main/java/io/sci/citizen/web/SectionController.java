@@ -1,6 +1,5 @@
 package io.sci.citizen.web;
 
-
 import io.sci.citizen.model.Section;
 import io.sci.citizen.model.dto.SectionRequest;
 import io.sci.citizen.service.SectionService;

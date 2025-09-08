@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,8 +39,10 @@ public class TextQueryService extends BaseService {
         if (opt.isEmpty()){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
-        if (!Objects.equals(getUser().getId(), opt.get().getProject().getCreator().getId())){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        if (!isAdmin()) {
+            if (!Objects.equals(getUser().getId(), opt.get().getProject().getCreator().getId())) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            }
         }
         return qRepo.findBySection_IdOrderBySequenceAsc(sectionId);
     }
@@ -101,7 +102,7 @@ public class TextQueryService extends BaseService {
             q.setSection(null);
 
         TextQuery textQuery = qRepo.save(q);
-        if (req.getType()==1||req.getType()==2||req.getType()==4){
+        if (req.getType()==1||req.getType()==2||req.getType()==4||req.getType()==6){
             for (QueryOptionRequest optionRequest : req.getOptions()) {
                 QueryOption p = new QueryOption();
                 if (optionRequest.getSequence() != null) {

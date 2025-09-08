@@ -36,8 +36,8 @@ public class TextQueryController extends BaseController{
             put(2, "Radio buttons");
             put(3, "String text field");
             put(4, "Check boxes");
-            put(5, "Date");
-			put(6, "Free options input");
+            put(5, "Date spinner");
+			//put(6, "Free options input");
 			put(7, "Free integer input");
 			put(8, "Free decimal input");
         }};
@@ -58,7 +58,8 @@ public class TextQueryController extends BaseController{
         form.getOptions().add(new QueryOptionRequest());
         if(queryId!=null) {
             var entity = service.getById(queryId);
-            if (!isAuthorized(entity.getSection().getProject())){
+            boolean isAuthorized = isAuthorized(entity.getSection().getProject());
+            if (!isAuthorized){
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN);
             }
             form.setId(entity.getId());
