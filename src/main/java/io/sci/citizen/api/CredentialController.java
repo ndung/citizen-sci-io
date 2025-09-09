@@ -63,7 +63,7 @@ public class CredentialController extends BaseApiController {
     public ResponseEntity<Response> signIn(@RequestBody SignInRequest req) {
         try {
             Authentication auth = authManager.authenticate(new UsernamePasswordAuthenticationToken(req.username(), req.password()));
-            var userDetails = userDetailsService.loadUserByUsername(req.password());
+            var userDetails = userDetailsService.loadUserByUsername(req.username());
             if (userDetails!=null) {
                 User user = userService.getUser(userDetails.getUsername());
                 LoginDetails details = createLoginDetails(user);

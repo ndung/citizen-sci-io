@@ -45,7 +45,6 @@ public class RecordService extends BaseService {
 
     @Transactional
     public void record(Long userId, String record, MultipartFile[] images, String results) throws IOException, URISyntaxException {
-        System.out.println("record:"+record);
         RecordData model = gson.fromJson(record, RecordData.class);
         List<Data> list = dataRepo.findByUser_IdAndUuidOrderByCreatedAtDesc(userId, model.uuid());
         Data data = new Data();

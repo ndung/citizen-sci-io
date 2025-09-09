@@ -27,7 +27,6 @@ public class BaseController {
     }
 
     public boolean isAuthorized(Project project){
-        System.out.println("isAdmin:"+isAdmin());
         if (isAdmin()) return true;
         if (project==null) return false;
         User user = getUser();
