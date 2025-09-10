@@ -182,9 +182,15 @@ public class Data implements Serializable {
     public String getDetails(){
         StringBuilder sb = new StringBuilder();
         for (QueryReply reply : surveyResponses) {
-            sb.append(reply.getQuestion().getAttribute()).append("=").append(reply.getResponse()).append("; ");
+            sb.append("{\"").append(reply.getQuestion().getAttribute()).append("\" : ");
+            if (!reply.getResponse().startsWith("[")){
+                sb.append("\"").append(reply.getResponse()).append("\"");
+            }else {
+                sb.append(reply.getResponse()).append(", ");
+            }
         }
-        return sb.toString();
+        String details = sb.toString();
+        return details.substring(0, details.length()-2)+"}";
     }
 
     @Override
