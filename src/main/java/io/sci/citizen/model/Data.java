@@ -181,13 +181,15 @@ public class Data implements Serializable {
     @Transient
     public String getDetails(){
         StringBuilder sb = new StringBuilder();
+        sb.append("{");
         for (QueryReply reply : surveyResponses) {
-            sb.append("{\"").append(reply.getQuestion().getAttribute()).append("\" : ");
+            sb.append("\"").append(reply.getQuestion().getAttribute()).append("\" : ");
             if (!reply.getResponse().startsWith("[")){
                 sb.append("\"").append(reply.getResponse()).append("\"");
             }else {
-                sb.append(reply.getResponse()).append(", ");
+                sb.append(reply.getResponse());
             }
+            sb.append(", ");
         }
         String details = sb.toString();
         return details.substring(0, details.length()-2)+"}";
