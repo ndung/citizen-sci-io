@@ -40,14 +40,14 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-        format_sql: ${SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL:true}
+        format_sql: ${SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL:false}
     show-sql: ${SPRING_JPA_HIBERNATE_SHOW-SQL:false}
   servlet:
     multipart:
       max-file-size: ${SPRING_SERVLET_MULTIPART_MAX-FILE-SIZE:10MB}
       max-request-size: ${SPRING_SERVLET_MULTIPART_MAX-REQUEST-SIZE:10MB}
   thymeleaf:
-    cache: false
+    cache: ${SPRING_THYMELEAF_CACHE:true}
   web:
     resources:
       static-locations: classpath:/static/
