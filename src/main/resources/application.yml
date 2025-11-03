@@ -9,11 +9,11 @@ app:
       region: ${APP_STORAGE_S3_REGION:ap-southeast-3}
       prefix: ${APP_STORAGE_S3_PREFIX:uploads/}
       url-minutes: ${APP_STORAGE_S3_URL-MINUTES:10}
-      access-key: ${APP_STORAGE_S3_ACCESS-KEY:}
-      secret-key: ${APP_STORAGE_S3_SECRET-KEY:}
+      access-key: ${APP_STORAGE_S3_ACCESS-KEY:AKIA4IP4PVPB3EYLE64Y}
+      secret-key: ${APP_STORAGE_S3_SECRET-KEY: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}
 jwt:
+  secret: ${JWT_SECRET:Lx3lVqVsihB8g6qQQu+Z1IA3nHBuUslAsTB8ZHauRiE=}
   expiration: ${JWT_EXPIRATION:-1}
-  secret: ${JWT_SECRET:}
 #logging:
 #  level:
 #    root: ${LOGGING_LEVEL_ROOT:DEBUG}
@@ -24,22 +24,22 @@ server:
   port: ${PORT:80}
 spring:
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: ${SPRING_DATASOURCE_HIKARI-MAXIMUM-POOL-SIZE:10}
       minimum-idle: ${SPRING_DATASOURCE_HIKARI-MAXIMUM-IDLE:2}
       connection-timeout: ${SPRING_DATASOURCE_HIKARI-CONNECTION-TIMEOUT:30000}
       idle-timeout: ${SPRING_DATASOURCE_HIKARI-IDLE-TIMEOUT:600000}
       max-lifetime: ${SPRING_DATASOURCE_HIKARI-MAX-LIFETIME:1800000}
-    url: ${SPRING_DATASOURCE_URL:}
-    username: ${SPRING_DATASOURCE_USERNAME:}
-    password: ${SPRING_DATASOURCE_PASSWORD:}
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://database-1.clfxlsjsjthw.ap-southeast-3.rds.amazonaws.com:3306/citizen_sci_io?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Jakarta&useSSL=true&allowPublicKeyRetrieval=true}
+    username: ${SPRING_DATASOURCE_USERNAME:admin}
+    password: ${SPRING_DATASOURCE_PASSWORD:kK7AjIl4tVWC0J2Q30VA}
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: ${SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL:false}
     show-sql: ${SPRING_JPA_HIBERNATE_SHOW-SQL:false}
   servlet:
