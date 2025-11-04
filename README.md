@@ -5,7 +5,7 @@ A REST API endpoint lets authenticated clients upload a record’s metadata, ima
 Security is enforced through JWT: all `/api/**` routes require tokens, with a custom filter ensuring stateless authentication.
 Deployment settings allow files to be stored locally or on AWS S3, and credentials and database properties are pulled from environment variables via configuration via `application.yml`.
 
-URL Demo: https://citizen-sci-io-c296af702ec9.herokuapp.com
+URL Demo: https://cs.risnov.id
 
 ## Login for admin
 - username: admin
