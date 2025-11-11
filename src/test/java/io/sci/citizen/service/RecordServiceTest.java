@@ -7,6 +7,7 @@ import io.sci.citizen.model.Project;
 import io.sci.citizen.model.User;
 import io.sci.citizen.model.repository.*;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Arrays;
@@ -56,6 +58,11 @@ class RecordServiceTest {
 
     @InjectMocks
     private RecordService recordService;
+
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(recordService, "userRepo", userRepo);
+    }
 
     @AfterEach
     void tearDown() {
