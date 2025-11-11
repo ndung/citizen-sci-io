@@ -80,7 +80,7 @@ class SecurityConfigTest {
         assertTrue((Boolean) ReflectionTestUtils.invokeMethod(filter, "isIncludeQueryString"));
         assertTrue((Boolean) ReflectionTestUtils.invokeMethod(filter, "isIncludeHeaders"));
         assertTrue((Boolean) ReflectionTestUtils.invokeMethod(filter, "isIncludePayload"));
-        assertEquals(10_000, ReflectionTestUtils.invokeMethod(filter, "getMaxPayloadLength"));
+        assertEquals(10_000, (Integer) ReflectionTestUtils.invokeMethod(filter, "getMaxPayloadLength"));
         assertEquals("REQUEST : ", ReflectionTestUtils.getField(filter, "afterMessagePrefix"));
     }
 
@@ -99,7 +99,16 @@ class SecurityConfigTest {
         DaoAuthenticationProvider provider = securityConfig.authProvider(uds, encoder);
 
         assertSame(uds, ReflectionTestUtils.getField(provider, "userDetailsService"));
-        assertSame(encoder, ReflectionTestUtils.getField(provider, "passwordEncoder"));
+        Object configuredPasswordEncoder = ReflectionTestUtils.getField(provider, "passwordEncoder");
+        assertNotNull(configuredPasswordEncoder);
+
+        if (configuredPasswordEncoder == encoder) {
+            assertSame(encoder, configuredPasswordEncoder);
+        } else {
+            Object delegate = ReflectionTestUtils.getField(configuredPasswordEncoder, "passwordEncoder");
+            assertNotNull(delegate);
+            assertSame(encoder, delegate);
+        }
     }
 
     @Test
