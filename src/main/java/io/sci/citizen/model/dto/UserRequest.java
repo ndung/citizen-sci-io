@@ -44,14 +44,4 @@ public class UserRequest {
                 .map(String::toUpperCase)
                 .toList());
     }
-
-    public static UserRequest fromEntity(User u) {
-        var r = new UserRequest();
-        r.setUsername(u.getUsername());
-        r.setFullName(u.getFullName());
-        r.setEmail(u.getEmail());
-        r.setEnabled(u.isEnabled());
-        r.setRolesCsv(String.join(", ", u.getRoles()));
-        return r;
-    }
 }
