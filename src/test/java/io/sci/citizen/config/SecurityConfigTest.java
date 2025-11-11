@@ -76,11 +76,11 @@ class SecurityConfigTest {
     void requestLoggingFilterIsConfigured() {
         var filter = securityConfig.requestLoggingFilter();
 
-        assertTrue(filter.isIncludeClientInfo());
-        assertTrue(filter.isIncludeQueryString());
-        assertTrue(filter.isIncludeHeaders());
-        assertTrue(filter.isIncludePayload());
-        assertEquals(10_000, filter.getMaxPayloadLength());
+        assertTrue((Boolean) ReflectionTestUtils.invokeMethod(filter, "isIncludeClientInfo"));
+        assertTrue((Boolean) ReflectionTestUtils.invokeMethod(filter, "isIncludeQueryString"));
+        assertTrue((Boolean) ReflectionTestUtils.invokeMethod(filter, "isIncludeHeaders"));
+        assertTrue((Boolean) ReflectionTestUtils.invokeMethod(filter, "isIncludePayload"));
+        assertEquals(10_000, ReflectionTestUtils.invokeMethod(filter, "getMaxPayloadLength"));
         assertEquals("REQUEST : ", ReflectionTestUtils.getField(filter, "afterMessagePrefix"));
     }
 
