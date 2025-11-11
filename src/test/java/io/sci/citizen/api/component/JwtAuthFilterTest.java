@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +19,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import java.io.IOException;
+
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -80,7 +83,13 @@ class JwtAuthFilterTest {
         assertThat(authentication).isNotNull();
         assertThat(authentication.getPrincipal()).isEqualTo(user);
         assertThat(authentication.getCredentials()).isNull();
-        assertThat(authentication.getAuthorities()).containsExactlyElementsOf(user.getAuthorities());
+        assertThat(authentication.getAuthorities())
+                .extracting(GrantedAuthority::getAuthority)
+                .containsExactlyElementsOf(
+                        user.getAuthorities().stream()
+                                .map(GrantedAuthority::getAuthority)
+                                .collect(Collectors.toList())
+                );
         assertThat(authentication.getDetails()).isInstanceOf(WebAuthenticationDetails.class);
 
         verify(jwtTokenUtil).getUsername("token");
