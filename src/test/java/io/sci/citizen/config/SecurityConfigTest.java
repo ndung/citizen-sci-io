@@ -4,6 +4,7 @@ import io.sci.citizen.model.User;
 import io.sci.citizen.model.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.GrantedAuthority;
@@ -98,17 +99,22 @@ class SecurityConfigTest {
 
         DaoAuthenticationProvider provider = securityConfig.authProvider(uds, encoder);
 
-        assertSame(uds, ReflectionTestUtils.getField(provider, "userDetailsService"));
-        Object configuredPasswordEncoder = ReflectionTestUtils.getField(provider, "passwordEncoder");
-        assertNotNull(configuredPasswordEncoder);
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken("jane", "secret");
 
-        if (configuredPasswordEncoder == encoder) {
-            assertSame(encoder, configuredPasswordEncoder);
-        } else {
-            Object delegate = ReflectionTestUtils.getField(configuredPasswordEncoder, "passwordEncoder");
-            assertNotNull(delegate);
-            assertSame(encoder, delegate);
-        }
+        UserDetails user = org.springframework.security.core.userdetails.User
+                .withUsername("jane")
+                .password("encoded")
+                .authorities("ROLE_USER")
+                .build();
+
+        when(uds.loadUserByUsername("jane")).thenReturn(user);
+        when(encoder.matches("secret", "encoded")).thenReturn(true);
+
+        assertNotNull(provider.authenticate(authentication));
+
+        verify(uds).loadUserByUsername("jane");
+        verify(encoder).matches("secret", "encoded");
     }
 
     @Test
