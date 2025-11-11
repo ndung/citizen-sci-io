@@ -20,13 +20,12 @@ class LocalFileControllerTest {
     @Test
     void getImageReturnsFileContentWhenFileExists() throws IOException {
         LocalFileController controller = new LocalFileController();
-        String location = tempDir.toString() + "/";
+        String location = tempDir.toString();
         ReflectionTestUtils.setField(controller, "location", location);
 
         String fileName = "sample.txt";
         byte[] expectedContent = "hello world".getBytes();
-        Path filePath = Path.of(location + "\\" + fileName);
-        Files.createDirectories(filePath.getParent());
+        Path filePath = tempDir.resolve(fileName);
         Files.write(filePath, expectedContent);
 
         ResponseEntity<byte[]> response = controller.getImage(fileName);
@@ -38,7 +37,7 @@ class LocalFileControllerTest {
     @Test
     void getImageReturnsBadRequestWhenFileMissing() {
         LocalFileController controller = new LocalFileController();
-        String location = tempDir.toString() + "/";
+        String location = tempDir.toString();
         ReflectionTestUtils.setField(controller, "location", location);
 
         ResponseEntity<byte[]> response = controller.getImage("missing.png");
@@ -50,7 +49,7 @@ class LocalFileControllerTest {
     @Test
     void getFileReturnsContentFromSubfolderWhenFileExists() throws IOException {
         LocalFileController controller = new LocalFileController();
-        String location = tempDir.toString() + "/";
+        String location = tempDir.toString();
         ReflectionTestUtils.setField(controller, "location", location);
 
         String subfolder = "images";
@@ -59,7 +58,7 @@ class LocalFileControllerTest {
 
         Path folderPath = tempDir.resolve(subfolder);
         Files.createDirectories(folderPath);
-        Path filePath = Path.of(location + subfolder + "/" + fileName);
+        Path filePath = folderPath.resolve(fileName);
         Files.write(filePath, expectedContent);
 
         ResponseEntity<byte[]> response = controller.getFile(subfolder, fileName);
@@ -71,7 +70,7 @@ class LocalFileControllerTest {
     @Test
     void getFileReturnsBadRequestWhenFileMissing() {
         LocalFileController controller = new LocalFileController();
-        String location = tempDir.toString() + "/";
+        String location = tempDir.toString();
         ReflectionTestUtils.setField(controller, "location", location);
 
         ResponseEntity<byte[]> response = controller.getFile("images", "unknown.jpg");
