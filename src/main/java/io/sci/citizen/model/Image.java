@@ -6,12 +6,18 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import java.time.Instant;
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name="image")
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Image {
 
+    @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,53 +42,9 @@ public class Image {
 
     private Integer status;
 
-    public Long getId() { return id; }
-
-    public void setId(Long id) { this.id = id; }
-
-    public String getOriginalFileName() { return originalFileName; }
-
-    public void setOriginalFileName(String originalFileName) { this.originalFileName = originalFileName; }
-
-    public String getUuid() { return uuid; }
-
-    public void setUuid(String uuid) { this.uuid = uuid; }
-
-    public Data getData() { return data; }
-
-    public void setData(Data data) { this.data = data; }
-
-    public Section getSection() { return section; }
-
-    public void setSection(Section section) { this.section = section; }
-
-    public Integer getStatus() { return status; }
-
-    public void setStatus(Integer status) { this.status = status; }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
     @Transient
     public String getUrl(){
         return "https://citizen-sci-io-c296af702ec9.herokuapp.com/files/"+uuid;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Image image = (Image) o;
-        return Objects.equals(id, image.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
     }
 
     @Override
