@@ -14,7 +14,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3ClientBuilder;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
-import software.amazon.awssdk.services.s3.presigner.S3PresignerBuilder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -144,7 +143,7 @@ class S3StorageConfigTest {
 
     private TestBuilders mockBuilders() {
         S3ClientBuilder clientBuilder = mock(S3ClientBuilder.class, RETURNS_SELF);
-        S3PresignerBuilder presignerBuilder = mock(S3PresignerBuilder.class, RETURNS_SELF);
+        S3Presigner.Builder presignerBuilder = mock(S3Presigner.Builder.class, RETURNS_SELF);
         S3Client client = mock(S3Client.class);
         S3Presigner presigner = mock(S3Presigner.class);
 
@@ -156,5 +155,5 @@ class S3StorageConfigTest {
         return new TestBuilders(clientBuilder, presignerBuilder);
     }
 
-    private record TestBuilders(S3ClientBuilder clientBuilder, S3PresignerBuilder presignerBuilder) { }
+    private record TestBuilders(S3ClientBuilder clientBuilder, S3Presigner.Builder presignerBuilder) { }
 }
