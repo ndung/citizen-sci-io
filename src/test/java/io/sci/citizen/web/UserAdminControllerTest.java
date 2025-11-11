@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -61,7 +62,7 @@ class UserAdminControllerTest {
         user.setEnabled(true);
         user.setEmail("alice@example.com");
         user.setUsername("alice");
-        user.setRoles(List.of("ADMIN", "USER"));
+        user.setRoles(Set.of("ADMIN", "USER"));
         when(userService.getById(5L)).thenReturn(user);
         when(userService.findAll()).thenReturn(List.of(user));
 
