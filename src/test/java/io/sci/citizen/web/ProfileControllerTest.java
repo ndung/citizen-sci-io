@@ -84,7 +84,7 @@ class ProfileControllerTest {
 
         assertThat(view).isEqualTo("redirect:/profile");
         assertThat(bindingResult.hasFieldErrors("username")).isTrue();
-        assertThat(redirectAttributes.getFlashAttributes()).containsEntry("form", form);
+        assertThat(redirectAttributes.getFlashAttributes().get("form")).isEqualTo(form);
         assertThat(redirectAttributes.getFlashAttributes())
                 .containsKey("org.springframework.validation.BindingResult.form");
         verify(userService, never()).updateProfile(any());
@@ -109,7 +109,7 @@ class ProfileControllerTest {
 
         assertThat(view).isEqualTo("redirect:/profile");
         assertThat(bindingResult.hasFieldErrors("email")).isTrue();
-        assertThat(redirectAttributes.getFlashAttributes()).containsEntry("form", form);
+        assertThat(redirectAttributes.getFlashAttributes().get("form")).isEqualTo(form);
         assertThat(redirectAttributes.getFlashAttributes())
                 .containsKey("org.springframework.validation.BindingResult.form");
         verify(userService, never()).updateProfile(any());
@@ -133,8 +133,8 @@ class ProfileControllerTest {
 
         assertThat(view).isEqualTo("redirect:/profile");
         assertThat(bindingResult.hasErrors()).isFalse();
-        assertThat(redirectAttributes.getFlashAttributes())
-                .containsEntry("profileSaved", true);
+        assertThat(redirectAttributes.getFlashAttributes().get("profileSaved"))
+                .isEqualTo(Boolean.TRUE);
         verify(userService).updateProfile(form);
     }
 
@@ -153,7 +153,7 @@ class ProfileControllerTest {
         assertThat(bindingResult.hasFieldErrors("confirmNewPassword")).isTrue();
         assertThat(redirectAttributes.getFlashAttributes())
                 .containsKey("org.springframework.validation.BindingResult.pwd");
-        assertThat(redirectAttributes.getFlashAttributes()).containsEntry("pwd", pwd);
+        assertThat(redirectAttributes.getFlashAttributes().get("pwd")).isEqualTo(pwd);
         verify(userService, never()).changePassword(any(), any());
     }
 
@@ -174,7 +174,7 @@ class ProfileControllerTest {
         assertThat(bindingResult.hasFieldErrors("currentPassword")).isTrue();
         assertThat(redirectAttributes.getFlashAttributes())
                 .containsKey("org.springframework.validation.BindingResult.pwd");
-        assertThat(redirectAttributes.getFlashAttributes()).containsEntry("pwd", pwd);
+        assertThat(redirectAttributes.getFlashAttributes().get("pwd")).isEqualTo(pwd);
     }
 
     @Test
@@ -190,8 +190,8 @@ class ProfileControllerTest {
 
         assertThat(view).isEqualTo("redirect:/profile");
         assertThat(bindingResult.hasErrors()).isFalse();
-        assertThat(redirectAttributes.getFlashAttributes())
-                .containsEntry("passwordChanged", true);
+        assertThat(redirectAttributes.getFlashAttributes().get("passwordChanged"))
+                .isEqualTo(Boolean.TRUE);
         verify(userService).changePassword("current", "new");
     }
 }
