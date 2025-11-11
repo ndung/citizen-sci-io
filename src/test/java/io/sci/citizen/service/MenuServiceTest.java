@@ -271,11 +271,13 @@ class MenuServiceTest {
         top1.setId(1L);
         top1.setEnabled(true);
         top1.setRequiredRoles(Set.of("ADMIN"));
+        top1.setHref("/admin");
 
         Menu top2 = new Menu();
         top2.setId(2L);
         top2.setEnabled(true);
         top2.setRequiredRoles(Set.of("USER"));
+        top2.setHref("/user");
 
         when(repo.findAllByParentIsNullOrderByOrderIndexAscTitleAsc()).thenReturn(List.of(top1, top2));
         when(repo.findAllByParentOrderByOrderIndexAscTitleAsc(top1)).thenReturn(List.of());
