@@ -77,7 +77,7 @@ class ProjectControllerTest {
 
         assertThat(view).isEqualTo("redirect:/projects");
         assertThat(form.getIcon()).isEqualTo("stored-key");
-        assertThat(redirectAttributes.getFlashAttributes()).containsEntry("projectSaved", true);
+        assertThat(redirectAttributes.getFlashAttributes()).containsEntry("projectSaved", Boolean.TRUE);
         verify(storage).store(startsWith("icon_"), eq(iconFile));
         verify(projectService).create(form);
     }
@@ -192,7 +192,7 @@ class ProjectControllerTest {
 
         assertThat(view).isEqualTo("redirect:/projects");
         assertThat(form.getIcon()).isEqualTo("stored-key");
-        assertThat(redirectAttributes.getFlashAttributes()).containsEntry("projectSaved", true);
+        assertThat(redirectAttributes.getFlashAttributes()).containsEntry("projectSaved", Boolean.TRUE);
         verify(storage).store(startsWith("icon_"), eq(iconFile));
         verify(projectService).update(7L, form);
     }

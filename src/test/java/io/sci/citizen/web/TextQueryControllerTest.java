@@ -187,7 +187,7 @@ class TextQueryControllerTest {
 
         assertThat(view).isEqualTo("redirect:/questions?sectionId=10");
         verify(textQueryService).save(form);
-        assertThat(redirectAttributes.getFlashAttributes()).containsEntry("querySaved", true);
+        assertThat((Boolean) redirectAttributes.getFlashAttributes().get("querySaved")).isTrue();
     }
 
     @Test
@@ -262,6 +262,6 @@ class TextQueryControllerTest {
 
         assertThat(view).isEqualTo("redirect:/questions?sectionId=14");
         verify(textQueryService).save(form);
-        assertThat(redirectAttributes.getFlashAttributes()).containsEntry("querySaved", true);
+        assertThat((Boolean) redirectAttributes.getFlashAttributes().get("querySaved")).isTrue();
     }
 }
