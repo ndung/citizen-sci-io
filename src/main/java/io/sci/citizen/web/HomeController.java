@@ -41,13 +41,13 @@ public class HomeController {
         List<ProjectData> projectDataList = new ArrayList<>();
         for (Project project : projectList) {
             List<Integer> summary = dataService.getProjectSummary(project.getId());
-            String contributors = ". Contributors: "+summary.get(0)+" ";
+            String contributors = ". Contributors: "+summary.get(0);
             if (summary.get(0) > 1) {
                 contributors = contributors + " users";
             }else{
                 contributors = contributors + " user";
             }
-            String records = ", data: "+summary.get(1)+" ";
+            String records = ", data: "+summary.get(1);
             if (summary.get(1) > 1) {
                 records = records + " records.";
             }else{

@@ -110,7 +110,7 @@ class ProjectControllerTest {
         MultipartFile iconFile = mock(MultipartFile.class);
         when(iconFile.isEmpty()).thenReturn(false);
         when(iconFile.getContentType()).thenReturn("image/gif");
-        when(iconFile.getOriginalFilename()).thenReturn("logo.gif");
+        //when(iconFile.getOriginalFilename()).thenReturn("logo.gif");
 
         RedirectAttributes redirectAttributes = new RedirectAttributesModelMap();
         Model model = new ExtendedModelMap();
@@ -157,7 +157,7 @@ class ProjectControllerTest {
     void update_whenNotAuthorized_throwsForbidden() {
         ProjectRequest form = new ProjectRequest();
         BindingResult binding = mock(BindingResult.class);
-        when(binding.hasErrors()).thenReturn(false);
+        //when(binding.hasErrors()).thenReturn(false);
         doReturn(false).when(controller).isAuthorized(42L);
 
         assertThatThrownBy(() -> controller.update(42L, form, binding, null,

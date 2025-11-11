@@ -8,6 +8,7 @@ import io.sci.citizen.model.repository.ProjectRepository;
 import io.sci.citizen.model.repository.SectionRepository;
 import io.sci.citizen.model.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -41,6 +43,11 @@ class SectionServiceTest {
 
     @InjectMocks
     private SectionService sectionService;
+
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(sectionService, "userRepo", userRepository);
+    }
 
     @AfterEach
     void tearDown() {

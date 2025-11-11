@@ -281,7 +281,7 @@ class MenuServiceTest {
 
         when(repo.findAllByParentIsNullOrderByOrderIndexAscTitleAsc()).thenReturn(List.of(top1, top2));
         when(repo.findAllByParentOrderByOrderIndexAscTitleAsc(top1)).thenReturn(List.of());
-        when(repo.findAllByParentOrderByOrderIndexAscTitleAsc(top2)).thenReturn(List.of());
+        //when(repo.findAllByParentOrderByOrderIndexAscTitleAsc(top2)).thenReturn(List.of());
 
         Authentication auth = new UsernamePasswordAuthenticationToken(
                 "user",

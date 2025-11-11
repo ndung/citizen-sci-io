@@ -39,21 +39,6 @@ class RecordServiceTest {
     private ImageRepository imageRepo;
 
     @Mock
-    private ProjectRepository projectRepo;
-
-    @Mock
-    private SectionRepository sectionRepo;
-
-    @Mock
-    private TextQueryRepository textQueryRepo;
-
-    @Mock
-    private QueryReplyRepository queryReplyRepo;
-
-    @Mock
-    private FileStorage fileStorage;
-
-    @Mock
     private UserRepository userRepo;
 
     @InjectMocks
