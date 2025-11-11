@@ -148,8 +148,10 @@ class TextQueryControllerTest {
 
         assertThatThrownBy(() -> controller.list(queryId, 3L, model))
                 .isInstanceOf(ResponseStatusException.class)
-                .satisfies(ex -> assertThat(((ResponseStatusException) ex).getStatusCode())
-                        .isEqualTo(HttpStatus.FORBIDDEN));
+                .satisfies(ex -> {
+                    assertThat(((ResponseStatusException) ex).getStatusCode())
+                            .isEqualTo(HttpStatus.FORBIDDEN);
+                });
     }
 
     @Test
@@ -221,8 +223,10 @@ class TextQueryControllerTest {
 
         assertThatThrownBy(() -> controller.editForm(queryId))
                 .isInstanceOf(ResponseStatusException.class)
-                .satisfies(ex -> assertThat(((ResponseStatusException) ex).getStatusCode())
-                        .isEqualTo(HttpStatus.FORBIDDEN));
+                .satisfies(ex -> {
+                    assertThat(((ResponseStatusException) ex).getStatusCode())
+                            .isEqualTo(HttpStatus.FORBIDDEN);
+                });
     }
 
     @Test
