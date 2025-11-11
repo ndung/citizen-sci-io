@@ -27,3 +27,7 @@ Exposed API endpoints:
 `/api/record/list-by-user`
 `/api/record/project-summary`
 `/api/record/user-summary`
+
+Deployment stack:
+- Heroku
+- Supabase
