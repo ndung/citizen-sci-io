@@ -34,7 +34,7 @@ class RecordApiControllerTest {
     }
 
     @Test
-    void uploadReturnsForbiddenWhenAuthorizationFails() {
+    void uploadReturnsForbiddenWhenAuthorizationFails() throws Exception {
         String token = "token";
         doReturn(false).when(controller).authorize(token);
 
@@ -65,7 +65,8 @@ class RecordApiControllerTest {
         String token = "token";
         doReturn(true).when(controller).authorize(token);
         doReturn("3").when(controller).getUserId(token);
-        doThrow(new IOException("boom")).when(recordService).record(anyLong(), anyString(), any(), anyString());
+        doThrow(new IOException("boom")).when(recordService)
+                .record(eq(3L), eq("model"), isNull(), isNull());
 
         ResponseEntity<Response> response = controller.upload(token, "model", null, null);
 
