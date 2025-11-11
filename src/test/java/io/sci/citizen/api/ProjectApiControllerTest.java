@@ -1,5 +1,6 @@
 package io.sci.citizen.api;
 
+import io.sci.citizen.model.Project;
 import io.sci.citizen.service.ProjectService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,7 +45,7 @@ class ProjectApiControllerTest {
         String token = "Bearer valid-token";
         doReturn(true).when(controller).authorize(token);
         doReturn("42").when(controller).getUserId(token);
-        Map<Long, String> projects = Map.of(1L, "Project A");
+        Map<Long, Project> projects = Map.of(1L, new Project());
         when(projectService.findAll(42L)).thenReturn(projects);
 
         ResponseEntity<Response> response = controller.get(token);
