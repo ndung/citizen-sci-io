@@ -97,7 +97,8 @@ class BaseApiControllerTest {
 
     @Test
     void getHttpStatusReturnsOkWhenDataPresent() {
-        Response response = new Response("data");
+        Response response = new Response();
+        response.setData("data");
 
         ResponseEntity<Response> entity = controller.getHttpStatus(response);
 
@@ -117,7 +118,8 @@ class BaseApiControllerTest {
 
     @Test
     void getHttpStatusWithHeadersUsesProvidedHeaders() {
-        Response response = new Response("data");
+        Response response = new Response();
+        response.setData("data");
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Test", "value");
 
