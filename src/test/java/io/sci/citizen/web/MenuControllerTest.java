@@ -44,7 +44,11 @@ class MenuControllerTest {
 
     @Test
     void listShouldPopulateItemsAndReturnListView() {
-        var items = List.of("item1", "item2");
+        Menu first = new Menu();
+        first.setTitle("item1");
+        Menu second = new Menu();
+        second.setTitle("item2");
+        var items = List.of(first, second);
         when(service.findAllFlatOrdered()).thenReturn(items);
 
         String viewName = controller.list(model);
@@ -55,7 +59,10 @@ class MenuControllerTest {
 
     @Test
     void createFormShouldPrepareFormAttributes() {
-        var parents = List.of("parent");
+        Menu parentCandidate = new Menu();
+        parentCandidate.setId(99L);
+        parentCandidate.setTitle("parent");
+        var parents = List.of(parentCandidate);
         when(service.allParentsCandidates(null)).thenReturn(parents);
 
         String viewName = controller.createForm(model);
@@ -74,7 +81,10 @@ class MenuControllerTest {
     @Test
     void createShouldReturnCreateViewWhenBindingErrors() {
         MenuRequest form = new MenuRequest();
-        var parents = List.of("parent");
+        Menu parentCandidate = new Menu();
+        parentCandidate.setId(50L);
+        parentCandidate.setTitle("parent");
+        var parents = List.of(parentCandidate);
         when(bindingResult.hasErrors()).thenReturn(true);
         when(service.allParentsCandidates(null)).thenReturn(parents);
 
@@ -112,12 +122,15 @@ class MenuControllerTest {
         entity.setEnabled(false);
         entity.setParent(parent);
         Set<String> roles = new LinkedHashSet<>();
-        roles.add("ROLE_ADMIN");
-        roles.add("ROLE_USER");
+        roles.add("ADMIN");
+        roles.add("USER");
         entity.setRequiredRoles(roles);
 
         when(service.getById(id)).thenReturn(entity);
-        var parents = List.of("parent");
+        Menu parentCandidate = new Menu();
+        parentCandidate.setId(22L);
+        parentCandidate.setTitle("parent");
+        var parents = List.of(parentCandidate);
         when(service.allParentsCandidates(id)).thenReturn(parents);
 
         String viewName = controller.editForm(id, model);
@@ -141,7 +154,10 @@ class MenuControllerTest {
     void updateShouldReturnEditViewWhenBindingErrors() {
         long id = 8L;
         MenuRequest form = new MenuRequest();
-        var parents = List.of("parent");
+        Menu parentCandidate = new Menu();
+        parentCandidate.setId(33L);
+        parentCandidate.setTitle("parent");
+        var parents = List.of(parentCandidate);
         when(bindingResult.hasErrors()).thenReturn(true);
         when(service.allParentsCandidates(id)).thenReturn(parents);
 
