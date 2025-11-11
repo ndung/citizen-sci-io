@@ -91,8 +91,6 @@ class DataServiceTest {
     @Test
     void findAllAsNonAdminThrowsForbidden() {
         mockAuthentication("user", "ROLE_USER");
-        when(userRepository.findByUsername("user")).thenReturn(Optional.of(createUser(1L, "user")));
-
         ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> dataService.findAll());
 
         assertEquals(HttpStatus.FORBIDDEN, ex.getStatusCode());
