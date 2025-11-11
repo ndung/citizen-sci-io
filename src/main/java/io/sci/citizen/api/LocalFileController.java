@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @RestController
 @RequestMapping("/file")
@@ -25,20 +25,14 @@ public class LocalFileController {
     @RequestMapping(value = "/{fileName:.+}", method = RequestMethod.GET)
     public ResponseEntity<byte[]> getImage(@PathVariable("fileName") String fileName) {
         HttpHeaders headers = new HttpHeaders();
-        DataInputStream in;
         try {
-            File file = new File(location+"\\"+fileName);
-            byte[] media = new byte[(int) file.length()];
-            BufferedInputStream br = new BufferedInputStream(new FileInputStream(file));
-            br.read(media);
+            Path filePath = resolvePath(fileName);
+            byte[] media = Files.readAllBytes(filePath);
 
             headers.setCacheControl(CacheControl.noCache().getHeaderValue());
-            ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(media, headers, HttpStatus.OK);
-            return responseEntity;
-
-        } catch (Exception e) {
-            ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
-            return responseEntity;
+            return new ResponseEntity<>(media, headers, HttpStatus.OK);
+        } catch (IOException e) {
+            return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -46,22 +40,19 @@ public class LocalFileController {
     public ResponseEntity<byte[]> getFile(@PathVariable("subfolder") String subfolder,
                                           @PathVariable("fileName") String fileName) {
         HttpHeaders headers = new HttpHeaders();
-        DataInputStream in;
 
         try {
-            File file = new File(location + subfolder + "/" + fileName);
-            byte[] media = new byte[(int) file.length()];
-            BufferedInputStream br = new BufferedInputStream(new FileInputStream(file));
-            br.read(media);
+            Path filePath = resolvePath(subfolder, fileName);
+            byte[] media = Files.readAllBytes(filePath);
 
             headers.setCacheControl(CacheControl.noCache().getHeaderValue());
-            ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(media, headers, HttpStatus.OK);
-            return responseEntity;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
-            return responseEntity;
+            return new ResponseEntity<>(media, headers, HttpStatus.OK);
+        } catch (IOException e) {
+            return new ResponseEntity<>(null, headers, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    private Path resolvePath(String... parts) {
+        return Paths.get(location, parts);
     }
 }
