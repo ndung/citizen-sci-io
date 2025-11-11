@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -48,9 +49,9 @@ class ProjectControllerTest {
     @BeforeEach
     void setUp() {
         controller = Mockito.spy(new ProjectController());
-        controller.storage = storage;
-        controller.projectService = projectService;
-        controller.userService = userService;
+        ReflectionTestUtils.setField(controller, "storage", storage);
+        ReflectionTestUtils.setField(controller, "projectService", projectService);
+        ReflectionTestUtils.setField(controller, "userService", userService);
     }
 
     @Test
@@ -82,7 +83,7 @@ class ProjectControllerTest {
     }
 
     @Test
-    void create_withBindingErrors_returnsProjectsView() throws IOException {
+    void create_withBindingErrors_returnsProjectsView() throws Exception {
         ProjectRequest form = new ProjectRequest();
         BindingResult binding = mock(BindingResult.class);
         when(binding.hasErrors()).thenReturn(true);
@@ -95,11 +96,11 @@ class ProjectControllerTest {
 
         assertThat(view).isEqualTo("projects");
         assertThat(model.getAttribute("projects")).isEqualTo(List.of());
-        verify(projectService, never()).create(any());
+        verify(projectService, never()).create(any(ProjectRequest.class));
     }
 
     @Test
-    void create_withInvalidIconType_rejectsBinding() throws IOException {
+    void create_withInvalidIconType_rejectsBinding() throws Exception {
         ProjectRequest form = new ProjectRequest();
         form.setName("Example");
         BindingResult binding = mock(BindingResult.class);
@@ -119,8 +120,8 @@ class ProjectControllerTest {
         assertThat(view).isEqualTo("projects");
         verify(binding).rejectValue(eq("icon"), eq("icon.invalid"), anyString());
         assertThat(model.getAttribute("projects")).isEqualTo(List.of());
-        verify(projectService, never()).create(any());
-        verify(storage, never()).store(anyString(), any());
+        verify(projectService, never()).create(any(ProjectRequest.class));
+        verify(storage, never()).store(anyString(), any(MultipartFile.class));
     }
 
     @Test
@@ -165,7 +166,7 @@ class ProjectControllerTest {
                 .extracting(ex -> ((ResponseStatusException) ex).getStatusCode())
                 .isEqualTo(HttpStatus.FORBIDDEN);
 
-        verify(projectService, never()).update(anyLong(), any());
+        verify(projectService, never()).update(anyLong(), any(ProjectRequest.class));
     }
 
     @Test
@@ -220,7 +221,7 @@ class ProjectControllerTest {
         assertThat(view).isEqualTo("projects");
         verify(binding).rejectValue("icon", "icon.io", "Failed to store icon file.");
         assertThat(model.getAttribute("projects")).isEqualTo(List.of());
-        verify(projectService, never()).update(anyLong(), any());
+        verify(projectService, never()).update(anyLong(), any(ProjectRequest.class));
     }
 
     @Test
