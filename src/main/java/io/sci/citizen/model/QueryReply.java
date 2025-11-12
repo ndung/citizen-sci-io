@@ -7,19 +7,12 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import java.util.Date;
-
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import java.util.Objects;
 
 @Entity
 @Table(name="survey_response")
-@Getter
-@Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class QueryReply {
 
-    @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "id")
@@ -42,4 +35,51 @@ public class QueryReply {
     @Column(name = "date_time")
     private Date responseDateTime;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Data getData() {
+        return data;
+    }
+
+    public void setData(Data data) {
+        this.data = data;
+    }
+
+    public TextQuery getQuestion() { return question; }
+
+    public void setQuestion(TextQuery question) { this.question = question; }
+
+    public String getResponse() {
+        return response;
+    }
+
+    public void setResponse(String response) {
+        this.response = response;
+    }
+
+    public Date getResponseDateTime() {
+        return responseDateTime;
+    }
+
+    public void setResponseDateTime(Date responseDateTime) {
+        this.responseDateTime = responseDateTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        QueryReply that = (QueryReply) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }
