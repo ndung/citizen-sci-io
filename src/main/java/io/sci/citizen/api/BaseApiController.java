@@ -49,12 +49,12 @@ public class BaseApiController {
     }
 
     protected ResponseEntity<Response> response(HttpStatus status, Response response) {
-		return new ResponseEntity<Response>(response, status);
+		return new ResponseEntity<>(response, status);
 	}
 
     protected ResponseEntity<Response> getHttpStatus(Response response, HttpHeaders headers) {
         HttpStatus hs = response.getData() == null ? HttpStatus.BAD_REQUEST :
                 HttpStatus.OK;
-        return new ResponseEntity<Response>(response, headers, hs);
+        return new ResponseEntity<>(response, headers, hs);
     }
 }
