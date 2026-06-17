@@ -12,7 +12,6 @@ import java.nio.file.Paths;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -29,16 +28,14 @@ class LocalStorageConfigTest {
 
         ResourceHandlerRegistry registry = mock(ResourceHandlerRegistry.class);
         ResourceHandlerRegistration registration = mock(ResourceHandlerRegistration.class);
-        when(registry.addResourceHandler("/file/**")).thenReturn(registration);
         when(registry.addResourceHandler("/files/**")).thenReturn(registration);
         when(registration.addResourceLocations(anyString())).thenReturn(registration);
 
         config.addResourceHandlers(registry);
 
         String expectedLocation = "file:" + Paths.get("uploads").toAbsolutePath() + "/";
-        verify(registry).addResourceHandler("/file/**");
         verify(registry).addResourceHandler("/files/**");
-        verify(registration, times(2)).addResourceLocations(expectedLocation);
+        verify(registration).addResourceLocations(expectedLocation);
     }
 
     @Test

@@ -15,6 +15,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "project")
 public class Project {
+    private static final String DEFAULT_ICON_BASE_URL = "https://citizen-sci-io-c296af702ec9.herokuapp.com/files/";
+    private static final String DEFAULT_LOCAL_ICON_BASE_URL = "http://localhost:80/file/";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -105,7 +107,7 @@ public class Project {
 
     @Transient
     public String getIconUrl(){
-        return "https://citizen-sci-io-c296af702ec9.herokuapp.com/files/"+icon;
+        return "/files/" + icon;
     }
 
     @Override

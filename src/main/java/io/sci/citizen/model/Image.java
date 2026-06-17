@@ -70,7 +70,7 @@ public class Image {
 
     @Transient
     public String getUrl(){
-        return "https://citizen-sci-io-c296af702ec9.herokuapp.com/files/"+uuid;
+        return "/files/" + uuid;
     }
 
     @Override
