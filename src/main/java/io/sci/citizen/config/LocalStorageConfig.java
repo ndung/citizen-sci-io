@@ -20,6 +20,7 @@ public class LocalStorageConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         String location = "file:" + Paths.get(props.getLocal().getBasePath()).toAbsolutePath() + "/";
+        registry.addResourceHandler("/file/**").addResourceLocations(location);
         registry.addResourceHandler("/files/**").addResourceLocations(location);
     }
 

@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: citizen-sci-io
+      POSTGRES_USER: citisci
+      POSTGRES_PASSWORD: citisci
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U citisci -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PORT: 80
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/citizen-sci-io
+      SPRING_DATASOURCE_USERNAME: citisci
+      SPRING_DATASOURCE_PASSWORD: citisci
+      JWT_SECRET: Y2l0aXNjaS1sb2NhbC1kZXZlbG9wbWVudC1qd3Qtc2VjcmV0LTEyMzQ1Ng==
+      JWT_EXPIRATION: -1
+      APP_STORAGE_TYPE: local
+      APP_STORAGE_LOCAL_BASE-PATH: /var/app/uploads
+      APP_STORAGE_LOCAL_BASE-URL: http://localhost:80/file/
+    ports:
+      - "80:80"
+    volumes:
+      - uploads_data:/var/app/uploads
+
+volumes:
+  postgres_data:
+  uploads_data:
