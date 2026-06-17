@@ -5,7 +5,7 @@ A REST API endpoint lets authenticated clients upload a record’s metadata, ima
 Security is enforced through JWT: all `/api/**` routes require tokens, with a custom filter ensuring stateless authentication.
 Deployment settings allow files to be stored locally or on AWS S3, and credentials and database properties are pulled from environment variables via configuration via `application.yml`.
 
-URL Demo: https://cs.risnov.id
+URL Demo: https://citizen-sci-io-c296af702ec9.herokuapp.com
 
 ## Docker installation
 
@@ -15,7 +15,7 @@ The easiest local installation is Docker Compose. It builds the Spring Boot app,
 docker compose up --build
 ```
 
-Open the app at http://localhost:80/login.
+Open the app at http://localhost:80/login
 
 ## Login for admin
 - username: admin
